@@ -25,6 +25,9 @@ dependencies:
   cupertino_icons: ^0.1.2
   sqflite: '>=0.8.5'
   path_provider: "^0.4.0"
+  intro_views_flutter: '^2.4.0'
+  flutter_calendar_carousel: ^1.3.18
+  datetime_picker_formfield: ^0.4.0
 
 dev_dependencies:
   flutter_test:
