@@ -5,7 +5,9 @@ class Onboarding extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    List<Widget> paginas = [ConfiguracionJornada()];
+    ConfiguracionJornada configuracionJornada = ConfiguracionJornada();
+
+    List<Widget> paginas = [configuracionJornada];
 
     return Stack(
       children: <Widget>[
@@ -34,7 +36,25 @@ class Onboarding extends StatelessWidget {
               ],
             ),
           ),
-        )
+        ),
+        Container(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: <Widget>[
+                  FlatButton(
+                    child: Text("Siguiente"),
+                    onPressed: (){
+                      configuracionJornada.obtenerFechar();
+                    },
+                  )
+                ],
+              )
+            ],
+          ),
+        ),
       ],
     );
   }
