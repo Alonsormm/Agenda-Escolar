@@ -20,13 +20,18 @@ class MateriasBloc{
     getMaterias();
   }
 
-  delete(int id){
-    DBProvider.db.eliminarMateria(id);
+  delete(int id)async{
+    await DBProvider.db.eliminarMateria(id);
     getMaterias();
   }
 
-  add(Materia materia){
-    DBProvider.db.nuevaMateria(materia);
+  update(Materia materia)async{
+    await DBProvider.db.actualizarMateria(materia);
+    getMaterias();
+  }
+
+  add(Materia materia)async{
+    await DBProvider.db.nuevaMateria(materia);
     getMaterias();
   } 
 

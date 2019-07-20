@@ -1,8 +1,8 @@
 import 'package:agenda_escolar/models/materia.dart';
 import 'package:agenda_escolar/screens/nuevos_elementos/agregar_materia.dart';
 import 'package:agenda_escolar/utils/blocs/materias_bloc.dart';
-import 'package:agenda_escolar/utils/database_helper.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_material_color_picker/flutter_material_color_picker.dart';
 
 class ConfiguracionMaterias extends StatefulWidget {
   @override
@@ -22,7 +22,6 @@ class _ConfiguracionMateriasState extends State<ConfiguracionMaterias> {
 
 
   Widget botonMas(){
-
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       crossAxisAlignment: CrossAxisAlignment.baseline,
@@ -34,12 +33,45 @@ class _ConfiguracionMateriasState extends State<ConfiguracionMaterias> {
             icon: Icon(Icons.add_circle_outline),
             onPressed: ()async{
               Materia temp = await Navigator.push(context, MaterialPageRoute(builder: (context) => AgregarMateria()));
-              //bloc.add(temp);
-              bloc.delete(1);
+              bloc.add(temp);
             },
           ),
         )
       ],
+    );
+  }
+
+  void _eleminarMateria(Materia materia) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Seleccione la opcion deseada"),
+          actions: <Widget>[
+            FlatButton(
+              child: new Text("Cancelar"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            FlatButton(
+              child: new Text("Modificar"),
+              onPressed: () async{
+                Navigator.of(context).pop();
+                Materia temp = await Navigator.push(context, MaterialPageRoute(builder: (context) => AgregarMateria(temp: materia,)));
+                bloc.update(temp);
+              },
+            ),
+            FlatButton(
+              child: new Text("Eliminar"),
+              onPressed: () {
+                bloc.delete(materia.id);
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -50,7 +82,7 @@ class _ConfiguracionMateriasState extends State<ConfiguracionMaterias> {
         children: <Widget>[
           Container(
             width: double.infinity,
-            height: 80,
+            height: 88,
             child: Align(
               alignment: Alignment.bottomCenter,
               child: botonMas(),
@@ -60,8 +92,7 @@ class _ConfiguracionMateriasState extends State<ConfiguracionMaterias> {
             padding: EdgeInsets.only(top: 100),
           ),
 
-          Container(
-            height: 100,
+          Expanded(
             child: StreamBuilder<List<Materia>>(
               stream: bloc.materias,
               builder: (BuildContext context,AsyncSnapshot<List<Materia>> snapshot){
@@ -72,7 +103,8 @@ class _ConfiguracionMateriasState extends State<ConfiguracionMaterias> {
                         Materia item = snapshot.data[index];
                         return ListTile(
                           title: Text(item.nombre),
-                          onLongPress: () => print(item.id),
+                          leading: CircleColor(color: Color(item.color),circleSize: 30,),
+                          onLongPress: () {_eleminarMateria(item);},
                         );
                       },
                     );

@@ -12,7 +12,7 @@ class Materia{
 
   Map<String,dynamic> toJson() => {
     "id" : id,
-    "idNombre" : nombre,
+    "nombre" : nombre,
     "color": color,
   };
 }

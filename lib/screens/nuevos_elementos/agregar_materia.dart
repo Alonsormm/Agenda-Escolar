@@ -15,14 +15,28 @@ class AgregarMateria extends StatefulWidget {
 
 class _AgregarMateriaState extends State<AgregarMateria> {
   TextEditingController nombreMateria = TextEditingController();
-
+  int id = -1;
   Color colorActual = Colors.red;
+  @override
+  initState(){
+    super.initState();
+    if(widget.temp != null){
+      colorActual = Color(widget.temp.color);
+      nombreMateria.text = widget.temp.nombre;
+      id = widget.temp.id;
+    }
+  }
 
   bool comprobar(){
     if(nombreMateria.text != "")
       return true;
-    return false;
+    else{
+      nombreMateria.text = nombreMateria.text.trimRight();
+      return false;
+    }
   }
+
+  
 
   Widget _botonGuardar() {
     return Container(
@@ -37,7 +51,13 @@ class _AgregarMateriaState extends State<AgregarMateria> {
                 child: Text("Guardar"),
                 onPressed: (){
                   if(comprobar()){
-                    Materia temp = Materia(id: 0, nombre: nombreMateria.text, color: colorActual.value);
+                    Materia temp;
+                    if(id != -1){
+                      temp = Materia(id: id, nombre: nombreMateria.text, color: colorActual.value);
+                    }
+                    else{
+                      temp = Materia(id: -1, nombre: nombreMateria.text, color: colorActual.value);
+                    }
                     Navigator.pop(context,temp);
                   }
                 },
@@ -89,6 +109,7 @@ class _AgregarMateriaState extends State<AgregarMateria> {
         )),
         Expanded(
           child: TextField(
+            textCapitalization: TextCapitalization.sentences,
             controller: nombreMateria,
             decoration: InputDecoration(
               border: InputBorder.none,
@@ -128,15 +149,14 @@ class _AgregarMateriaState extends State<AgregarMateria> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Materia"),
-        backgroundColor: Colors.transparent,
-      ),
       body: Container(
         child: Stack(
           children: <Widget>[
             Column(
               children: <Widget>[
+                Padding(
+                  padding: EdgeInsets.only(top: 100),
+                ),
                 rowNombreMateria(),
                 Padding(
                   padding: EdgeInsets.only(top: 10),
