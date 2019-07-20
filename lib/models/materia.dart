@@ -1,18 +1,18 @@
 class Materia{
   final int id;
   final String nombre;
-  final int idProfesor;
-  Materia({this.id, this.nombre,this.idProfesor});
+  final String color;
+  Materia({this.id, this.nombre,this.color});
 
   factory Materia.fromJson(Map<String,dynamic> json) => Materia(
     id: json["id"],
     nombre: json["nombre"],
-    idProfesor: json["idProfesor"],
+    color: json["color"],
   );
 
   Map<String,dynamic> toJson() => {
     "id" : id,
     "idNombre" : nombre,
-    "idProfesor": idProfesor,
+    "color": color,
   };
 }

@@ -1,4 +1,6 @@
 import 'package:agenda_escolar/components/boton_calendario.dart';
+import 'package:agenda_escolar/models/jornada.dart';
+import 'package:agenda_escolar/utils/database_helper.dart';
 import 'package:flutter/material.dart';
 
 
@@ -9,8 +11,12 @@ class ConfiguracionJornada extends StatefulWidget {
 
   final _ConfiguracionJornadaState state = _ConfiguracionJornadaState();
 
-  void guardarDatos(){
-    state.guardarDatos();
+  Future<bool> guardarDatos()async{
+    return state.guardarDatos();
+  }
+
+  Future<void> eliminarDatos()async{
+    state.borrarDatos();
   }
 
   @override
@@ -18,15 +24,6 @@ class ConfiguracionJornada extends StatefulWidget {
 }
 
 class _ConfiguracionJornadaState extends State<ConfiguracionJornada> {
-  // DateTime inicioJornada = DateTime.now();
-  // DateTime finJornada = DateTime.now()
-
-  void guardarDatos(){
-    //int duracion = inicio.getFecha().difference(fin.getFecha()).inDays;
-    //print(inicio.getFecha());
-    //TODO
-    print(keyInicio.currentState.controladorTemp.difference(keyFinal.currentState.controladorTemp).inDays);
-  }
 
   Map<String, bool> dias = {
     "Lunes": true,
@@ -37,6 +34,26 @@ class _ConfiguracionJornadaState extends State<ConfiguracionJornada> {
     "Sabado": false,
     "Domingo": false
   };
+
+  Future<bool> guardarDatos()async {
+    int duracion = keyFinal.currentState.controladorTemp.difference(keyInicio.currentState.controladorTemp).inDays + 1;
+    if(duracion-1 > 0){
+      Jornada temp = Jornada(id: 0, duracion: duracion);
+      await DBProvider.db.nuevaJornada(temp);
+      await DBProvider.db.diasDeMapa(dias);
+      return true;
+    }
+    else{
+      return false;
+    }
+  }
+
+  Future<void> borrarDatos()async{
+    await DBProvider.db.eliminarJornada(0);
+    for(int i = 0; i < 7; i++){
+      DBProvider.db.eliminarDia(i);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

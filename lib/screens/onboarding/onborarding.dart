@@ -1,16 +1,77 @@
-import 'package:agenda_escolar/components/boton_calendario.dart';
-import 'package:agenda_escolar/screens/onboarding/screens/configuracionJornada.dart';
+import 'package:agenda_escolar/screens/onboarding/screens/configuracion_jornada.dart';
+import 'package:agenda_escolar/screens/onboarding/screens/configuracion_materias.dart';
 import 'package:flutter/material.dart';
 
+class Onboarding extends StatefulWidget {
+  @override
+  _OnboardingState createState() => _OnboardingState();
+}
 
-class Onboarding extends StatelessWidget {
+class _OnboardingState extends State<Onboarding> {
+  List<Widget> paginas = List<Widget>();
+
+  _OnboardingState() {
+    paginas = [ configuracionMaterias];
+  }
+  PageController _controller = PageController(initialPage: 0, keepPage: false);
+
+  int currentIndex = 0;
+
+  ConfiguracionJornada configuracionJornada = ConfiguracionJornada();
+
+  ConfiguracionMaterias configuracionMaterias = ConfiguracionMaterias();
+
+  Widget _botonSiguiente() {
+    if (currentIndex < paginas.length - 1)
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: <Widget>[
+          FlatButton(
+            child: Text("Siguiente"),
+            onPressed: () async {
+              if (_controller.page == 0) {
+                if (await configuracionJornada.guardarDatos()) {
+                  _controller.jumpToPage(1);
+                  setState(() {
+                    currentIndex = 1;
+                  });
+                }
+              }
+            },
+          )
+        ],
+      );
+    else {
+      return Container();
+    }
+  }
+
+  Widget _botonAtras() {
+    if (currentIndex > 0)
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: <Widget>[
+          FlatButton(
+            child: Text("Atras"),
+            onPressed: () async {
+              if (_controller.page == 1){
+                await configuracionJornada.eliminarDatos();
+                _controller.jumpToPage(0);
+                setState(() {
+                  currentIndex = 0;
+                });
+              }
+            },
+          )
+        ],
+      );
+    else {
+      return Container();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-
-    ConfiguracionJornada configuracionJornada = ConfiguracionJornada();
-
-    List<Widget> paginas = [configuracionJornada];
-
     return Stack(
       children: <Widget>[
         PageView.builder(
@@ -18,6 +79,8 @@ class Onboarding extends StatelessWidget {
           itemBuilder: (context, index) {
             return paginas[index];
           },
+          controller: _controller,
+          physics: NeverScrollableScrollPhysics(),
         ),
         Container(
           width: double.infinity,
@@ -31,9 +94,7 @@ class Onboarding extends StatelessWidget {
               children: <Widget>[
                 Padding(
                   padding: const EdgeInsets.only(left: 32.0),
-                  child: Text(
-                    "Agenda Escolar"
-                  ),
+                  child: Text("Agenda Escolar"),
                 )
               ],
             ),
@@ -43,15 +104,10 @@ class Onboarding extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.end,
             children: <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+              Stack(
                 children: <Widget>[
-                  FlatButton(
-                    child: Text("Siguiente"),
-                    onPressed: (){
-                      configuracionJornada.guardarDatos();
-                    },
-                  )
+                  _botonSiguiente(),
+                  _botonAtras(),
                 ],
               )
             ],

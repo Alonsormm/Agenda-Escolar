@@ -1,7 +1,6 @@
 import 'dart:io';
-import 'package:agenda_escolar/models/profesor.dart';
 import 'package:agenda_escolar/models/dia.dart';
-import 'package:agenda_escolar/models/Jornada.dart';
+import 'package:agenda_escolar/models/jornada.dart';
 import 'package:agenda_escolar/models/localizacion.dart';
 import 'package:agenda_escolar/models/materia.dart';
 import 'package:agenda_escolar/models/modulo.dart';
@@ -43,7 +42,7 @@ class DBProvider{
 
   //Tabla: Materia
   final String materiaTable = "Materia";
-  final String columnIdProfesor = "idProfesor";
+  final String columnColor = "color";
 
   //Tabla: Localizacion
   final String localizacionTable = "Localizacion";
@@ -59,6 +58,7 @@ class DBProvider{
 
   //Tabla: Dia
   final String diaTable = "Dia";
+  final String columnDiaActivo = "diaActivo";
   final String columnIdJornada = "idJornada";
 
   //Tabla: Jornada
@@ -79,59 +79,31 @@ class DBProvider{
 
   initDB() async{
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
-    String path = join(documentsDirectory.path, "Agenda.db");
-    return await openDatabase(path, version: 3, onOpen: (db) {
+    String path = join(documentsDirectory.path, "datosAgenda.db");
+    return await openDatabase(path, version: 1, onOpen: (db) {
     }, onCreate: (Database db, int version) async {
       await db.execute("CREATE TABLE $tareaTable ($columnId INTEGER PRIMARY KEY, $columnIdMateria INTEGER,$columnNombre TEXT,$columnDescripcion TEXT,$columnFechaDeEntrega TEXT,$columnAcabado INTEGER, FOREIGN KEY ($columnIdMateria) REFERENCES $materiaTable($columnId))");
       await db.execute("CREATE TABLE $proyectoTable ($columnId INTEGER PRIMARY KEY, $columnIdMateria INTEGER,$columnNombre TEXT,$columnDescripcion TEXT,$columnFechaDeEntrega TEXT,$columnAcabado INTEGER, FOREIGN KEY ($columnIdMateria) REFERENCES $materiaTable($columnId))");
       await db.execute("CREATE TABLE $examenTable ($columnId INTEGER PRIMARY KEY, $columnIdMateria INTEGER,$columnDescripcion TEXT,$columnFechaDeEntrega TEXT,$columnAcabado INTEGER, FOREIGN KEY ($columnIdMateria) REFERENCES $materiaTable($columnId))");
-      await db.execute("CREATE TABLE $profesorTable ($columnId INTEGER PRIMARY KEY, $columnNombre TEXT, $columnInformacionDeContacto TEXT)");
-      await db.execute("CREATE TABLE $materiaTable ($columnId INTEGER PRIMARY KEY, $columnNombre TEXT, $columnIdProfesor INTEGER, FOREIGN KEY ($columnIdProfesor) REFERENCES $profesorTable($columnId))");
+      await db.execute("CREATE TABLE $materiaTable ($columnId INTEGER PRIMARY KEY, $columnNombre TEXT, $columnColor TEXT)");
       await db.execute("CREATE TABLE $localizacionTable ($columnId INTEGER PRIMARY KEY, $columnEdificio TEXT, $columnSalon TEXT)");
-      await db.execute("CREATE TABLE $jornadaTable ($columnId INTEGER PRIMARY KEY, $columnNombre TEXT , $columnDuracion INTEGER, $columnNumeroDias INTEGER)");
-      await db.execute("CREATE TABLE $diaTable ($columnId INTEGER PRIMARY KEY, $columnIdJornada INTEGER, FOREIGN KEY ($columnIdJornada) REFERENCES $jornadaTable($columnId))");
+      await db.execute("CREATE TABLE $jornadaTable ($columnId INTEGER PRIMARY KEY,$columnDuracion INTEGER, $columnNumeroDias INTEGER)");
+      await db.execute("CREATE TABLE $diaTable ($columnId INTEGER PRIMARY KEY, $columnDiaActivo INTEGER, $columnIdJornada INTEGER, FOREIGN KEY ($columnIdJornada) REFERENCES $jornadaTable($columnId))");
       await db.execute("CREATE TABLE $moduloTable ($columnId INTEGER PRIMARY KEY, $columnIdMateria INTEGER, $columnIdLocalizacion INTEGER, $columnIdDia INTEGER, $columnHoraDeInicio TEXT, $columnHoraDeFinal TEXT, FOREIGN KEY ($columnIdMateria) REFERENCES $materiaTable($columnId), FOREIGN KEY ($columnIdLocalizacion) REFERENCES $localizacionTable($columnId) ,FOREIGN KEY ($columnIdDia) REFERENCES $diaTable($columnId))");
     });
-  }
-
-  //CRUD Profesor
-
-  nuevoProfesor(Profesor profesor) async{
-    final db = await database;
-    await db.insert(profesorTable, profesor.toJson());
-  }
-  obtenerProfesor(int id) async{
-    final db = await database;
-    var res= await db.query(profesorTable, where: "id = ?", whereArgs: [id]);
-    return res.isNotEmpty ? Profesor.fromJson(res.first) : Null ;
-  }
-
-  obtenerTodosLosProfesores() async{
-    final db = await database;
-    var res = await db.rawQuery("SELECT * FROM $profesorTable");
-    List<Profesor> lista = List<Profesor>(); 
-    for(int i = 0 ; i < res.length; i++){
-      Profesor temp = Profesor.fromJson(res[i]);
-      lista.add(temp);
-    }
-    return lista;
-  }
-
-  actualizarProfesor(Profesor profesor) async{
-    final db = await database;
-    await db.update(profesorTable, profesor.toJson(),where: "id = ?", whereArgs: [profesor.id]);
-  }
-
-  eliminarProfesor(int id)async{
-    final db = await database;
-    db.delete(profesorTable,where: "id = ?", whereArgs: [id]);
   }
 
   //CRUD Materia
 
   nuevaMateria(Materia materia) async{
     final db = await database;
-    await db.insert(materiaTable, materia.toJson());
+    var table = await db.rawQuery("SELECT MAX(id)+1 as id FROM $materiaTable");
+    int id = table.first["id"];
+    var raw = await db.rawInsert(
+        "INSERT Into $materiaTable (id,$columnNombre,$columnColor)"
+        " VALUES (?,?,?)",
+        [id, materia.nombre, materia.color]);
+    return raw;
   }
 
   obtenerMateria(int id) async{
@@ -332,7 +304,7 @@ class DBProvider{
 
   //CRUD Dia
 
-  nuevaDia(Dia dia) async{
+  nuevoDia(Dia dia) async{
     final db = await database;
     await db.insert(diaTable, dia.toJson());
   }
@@ -346,6 +318,21 @@ class DBProvider{
   actualizarDia(Dia dia) async{
     final db = await database;
     await db.update(diaTable, dia.toJson(),where: "id = ?", whereArgs: [dia.id]);
+  }
+
+  diasDeMapa(Map<String, bool>dias) async{
+    List<String> keys = dias.keys.toList();
+    for(int i = 0; i < keys.length; i++){
+      int activo;
+      if(dias[keys[i]]){
+        activo = 1;
+      }
+      else{
+        activo = 0;
+      }
+      Dia temp = Dia(id: i, idJornada: 0, diaActivo: activo);
+      await nuevoDia(temp);
+    }
   }
 
   eliminarDia(int id)async{
@@ -363,7 +350,7 @@ class DBProvider{
   obtenerJornada(int id) async{
     final db = await database;
     var res= await db.query(jornadaTable, where: "id = ?", whereArgs: [id]);
-    return res.isNotEmpty ? Dia.fromJson(res.first) : Null ;
+    return res.isNotEmpty ? Jornada.fromJson(res.first) : Null ;
   }
 
   actualizarJornada(Jornada jornada) async{
