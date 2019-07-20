@@ -1,15 +1,13 @@
 import 'package:agenda_escolar/components/boton_calendario.dart';
-import 'package:agenda_escolar/models/Jornada.dart';
-import 'package:agenda_escolar/utils/database_helper.dart';
 import 'package:flutter/material.dart';
+
+
+final keyInicio = GlobalKey<BotonCalendarioState>(debugLabel: 'inicio');
+final keyFinal = GlobalKey<BotonCalendarioState>(debugLabel: 'final');
 
 class ConfiguracionJornada extends StatefulWidget {
 
   final _ConfiguracionJornadaState state = _ConfiguracionJornadaState();
-
-  List<DateTime>obtenerFechar(){
-    return state.obtenerFechas();
-  }
 
   void guardarDatos(){
     state.guardarDatos();
@@ -21,18 +19,13 @@ class ConfiguracionJornada extends StatefulWidget {
 
 class _ConfiguracionJornadaState extends State<ConfiguracionJornada> {
   // DateTime inicioJornada = DateTime.now();
-  // DateTime finJornada = DateTime.now();
-
-  BotonCalendario inicio = BotonCalendario(controlador: DateTime.now(),);
-  BotonCalendario fin = BotonCalendario(controlador: DateTime.now(),);
-
-  List<DateTime> obtenerFechas(){
-    return [inicio.getFecha(),fin.getFecha()];
-  }
+  // DateTime finJornada = DateTime.now()
 
   void guardarDatos(){
-    int duracion = inicio.getFecha().difference(fin.getFecha()).inDays;
-    print(duracion);
+    //int duracion = inicio.getFecha().difference(fin.getFecha()).inDays;
+    //print(inicio.getFecha());
+    //TODO
+    print(keyInicio.currentState.controladorTemp.difference(keyFinal.currentState.controladorTemp).inDays);
   }
 
   Map<String, bool> dias = {
@@ -54,14 +47,17 @@ class _ConfiguracionJornadaState extends State<ConfiguracionJornada> {
             padding: EdgeInsets.only(top: 100),
           ),
           Text("Seleccione la fecha en la cual inicia su ciclo escolar"),
-          inicio,
+          BotonCalendario(key: keyInicio,),
           Padding(
             padding: EdgeInsets.only(top: 20),
           ),
           Text("Seleccione la fecha en la cual finaliza su ciclo escolar"),
-          fin,
+          BotonCalendario(key:keyFinal,),
           Text("Seleccione los dias de la semana que va a la escuela"),
           _listaDeDias(),
+          Padding(
+            padding: EdgeInsets.only(top: 40),
+          ),
         ],
       ),
     );
@@ -71,7 +67,6 @@ class _ConfiguracionJornadaState extends State<ConfiguracionJornada> {
     return Expanded(
       child: ListView(
         padding: EdgeInsets.only(left: 50, right: 50),
-        physics: NeverScrollableScrollPhysics(),
         children: dias.keys.map((String dia) {
           return CheckboxListTile(
             title: Text(dia),

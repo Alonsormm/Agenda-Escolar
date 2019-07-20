@@ -3,36 +3,22 @@ import 'package:intl/intl.dart';
 
 class BotonCalendario extends StatefulWidget {
 
-  BotonCalendario({this.controlador});
-  final DateTime controlador;
-
-  final _BotonCalendarioState state = _BotonCalendarioState();
-
-  DateTime getFecha(){
-    return state.getFecha();
-  }
+  BotonCalendario({ Key key }) : super(key: key);
 
   @override
-  _BotonCalendarioState createState(){
-    return state;
-  }
+  BotonCalendarioState createState() => BotonCalendarioState();
 }
 
-class _BotonCalendarioState extends State<BotonCalendario> {
+class BotonCalendarioState extends State<BotonCalendario> {
   DateFormat dateFormat = DateFormat("d MMM y");
-
   DateTime controlador;
   DateTime controladorTemp;
 
   @override
   void initState() {
     super.initState();
-    controlador = widget.controlador;
+    controlador = DateTime.now();
     controladorTemp = controlador;
-  }
-
-  DateTime getFecha(){
-    return controladorTemp;
   }
 
   @override

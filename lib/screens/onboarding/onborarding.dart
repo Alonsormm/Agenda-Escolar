@@ -1,5 +1,7 @@
+import 'package:agenda_escolar/components/boton_calendario.dart';
 import 'package:agenda_escolar/screens/onboarding/screens/configuracionJornada.dart';
 import 'package:flutter/material.dart';
+
 
 class Onboarding extends StatelessWidget {
   @override
@@ -47,7 +49,7 @@ class Onboarding extends StatelessWidget {
                   FlatButton(
                     child: Text("Siguiente"),
                     onPressed: (){
-                      configuracionJornada.obtenerFechar();
+                      configuracionJornada.guardarDatos();
                     },
                   )
                 ],
