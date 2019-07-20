@@ -1,6 +1,7 @@
 import 'package:agenda_escolar/models/materia.dart';
 import 'package:agenda_escolar/screens/nuevos_elementos/agregar_materia.dart';
 import 'package:agenda_escolar/utils/blocs/materias_bloc.dart';
+import 'package:agenda_escolar/utils/database_helper.dart';
 import 'package:flutter/material.dart';
 
 class ConfiguracionMaterias extends StatefulWidget {
@@ -31,8 +32,10 @@ class _ConfiguracionMateriasState extends State<ConfiguracionMaterias> {
           padding: const EdgeInsets.only(right: 20.0),
           child: IconButton(
             icon: Icon(Icons.add_circle_outline),
-            onPressed: (){
-              Navigator.push(context, MaterialPageRoute(builder: (context) => AgregarMateria()));
+            onPressed: ()async{
+              Materia temp = await Navigator.push(context, MaterialPageRoute(builder: (context) => AgregarMateria()));
+              //bloc.add(temp);
+              bloc.delete(1);
             },
           ),
         )
@@ -69,6 +72,7 @@ class _ConfiguracionMateriasState extends State<ConfiguracionMaterias> {
                         Materia item = snapshot.data[index];
                         return ListTile(
                           title: Text(item.nombre),
+                          onLongPress: () => print(item.id),
                         );
                       },
                     );

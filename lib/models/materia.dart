@@ -1,7 +1,7 @@
 class Materia{
   final int id;
   final String nombre;
-  final String color;
+  final int color;
   Materia({this.id, this.nombre,this.color});
 
   factory Materia.fromJson(Map<String,dynamic> json) => Materia(

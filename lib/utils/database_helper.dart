@@ -79,13 +79,13 @@ class DBProvider{
 
   initDB() async{
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
-    String path = join(documentsDirectory.path, "datosAgenda.db");
+    String path = join(documentsDirectory.path, "AgendaEsc.db");
     return await openDatabase(path, version: 1, onOpen: (db) {
     }, onCreate: (Database db, int version) async {
       await db.execute("CREATE TABLE $tareaTable ($columnId INTEGER PRIMARY KEY, $columnIdMateria INTEGER,$columnNombre TEXT,$columnDescripcion TEXT,$columnFechaDeEntrega TEXT,$columnAcabado INTEGER, FOREIGN KEY ($columnIdMateria) REFERENCES $materiaTable($columnId))");
       await db.execute("CREATE TABLE $proyectoTable ($columnId INTEGER PRIMARY KEY, $columnIdMateria INTEGER,$columnNombre TEXT,$columnDescripcion TEXT,$columnFechaDeEntrega TEXT,$columnAcabado INTEGER, FOREIGN KEY ($columnIdMateria) REFERENCES $materiaTable($columnId))");
       await db.execute("CREATE TABLE $examenTable ($columnId INTEGER PRIMARY KEY, $columnIdMateria INTEGER,$columnDescripcion TEXT,$columnFechaDeEntrega TEXT,$columnAcabado INTEGER, FOREIGN KEY ($columnIdMateria) REFERENCES $materiaTable($columnId))");
-      await db.execute("CREATE TABLE $materiaTable ($columnId INTEGER PRIMARY KEY, $columnNombre TEXT, $columnColor TEXT)");
+      await db.execute("CREATE TABLE $materiaTable ($columnId INTEGER PRIMARY KEY, $columnNombre TEXT, $columnColor INTEGER)");
       await db.execute("CREATE TABLE $localizacionTable ($columnId INTEGER PRIMARY KEY, $columnEdificio TEXT, $columnSalon TEXT)");
       await db.execute("CREATE TABLE $jornadaTable ($columnId INTEGER PRIMARY KEY,$columnDuracion INTEGER, $columnNumeroDias INTEGER)");
       await db.execute("CREATE TABLE $diaTable ($columnId INTEGER PRIMARY KEY, $columnDiaActivo INTEGER, $columnIdJornada INTEGER, FOREIGN KEY ($columnIdJornada) REFERENCES $jornadaTable($columnId))");
