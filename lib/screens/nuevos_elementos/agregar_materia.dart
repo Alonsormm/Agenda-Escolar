@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:agenda_escolar/models/materia.dart';
 import 'package:flutter_material_color_picker/flutter_material_color_picker.dart';
+import 'dart:math';
 
 class AgregarMateria extends StatefulWidget {
   final Materia temp;
@@ -16,7 +17,7 @@ class AgregarMateria extends StatefulWidget {
 class _AgregarMateriaState extends State<AgregarMateria> {
   TextEditingController nombreMateria = TextEditingController();
   int id = -1;
-  Color colorActual = Colors.red;
+  Color colorActual = Color((Random().nextDouble() * 0xFFFFFF).toInt() << 0).withOpacity(1.0);
   @override
   initState(){
     super.initState();
@@ -69,6 +70,28 @@ class _AgregarMateriaState extends State<AgregarMateria> {
     );
   }
 
+  Widget _botonCancelar() {
+    return Container(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: <Widget>[
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              
+              FlatButton(
+                child: Text("Cancelar"),
+                onPressed: (){ 
+                  Navigator.pop(context,null);
+                },
+              )
+            ],
+          )
+        ],
+      ),
+    );
+  }
+
   void _elegirColorDialog() {
     showDialog(
       context: context,
@@ -81,6 +104,7 @@ class _AgregarMateriaState extends State<AgregarMateria> {
                 colorActual = color;
               });
             },
+            selectedColor: colorActual,
           ),
           actions: <Widget>[
             new FlatButton(
@@ -165,6 +189,7 @@ class _AgregarMateriaState extends State<AgregarMateria> {
               ],
             ),
             _botonGuardar(),
+            _botonCancelar(),
           ],
         ),
       ),

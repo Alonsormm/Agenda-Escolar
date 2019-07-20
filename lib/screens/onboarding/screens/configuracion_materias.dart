@@ -10,34 +10,38 @@ class ConfiguracionMaterias extends StatefulWidget {
 }
 
 class _ConfiguracionMateriasState extends State<ConfiguracionMaterias> {
-
   List<Materia> materias = List<Materia>();
 
   final bloc = MateriasBloc();
   @override
-  void dispose(){
+  void dispose() {
     bloc.dispose();
     super.dispose();
   }
 
-
-  Widget botonMas(){
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
-      crossAxisAlignment: CrossAxisAlignment.baseline,
-      textBaseline: TextBaseline.alphabetic,
-      children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.only(right: 20.0),
-          child: IconButton(
-            icon: Icon(Icons.add_circle_outline),
-            onPressed: ()async{
-              Materia temp = await Navigator.push(context, MaterialPageRoute(builder: (context) => AgregarMateria()));
-              bloc.add(temp);
-            },
+  Widget botonMas() {
+    return InkWell(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        textBaseline: TextBaseline.alphabetic,
+        children: <Widget>[
+          Text("Nueva materia"),
+          IconButton(
+            icon: Icon(
+              Icons.add_circle_outline,
+            ),
+            onPressed: (){},
           ),
-        )
-      ],
+        ],
+      ),
+      onTap: () async {
+        Materia temp = await Navigator.push(
+            context, MaterialPageRoute(builder: (context) => AgregarMateria()));
+        if(temp == null){
+          return;
+        }
+        bloc.add(temp);
+      },
     );
   }
 
@@ -46,7 +50,7 @@ class _ConfiguracionMateriasState extends State<ConfiguracionMaterias> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("Seleccione la opcion deseada"),
+          content: Text("Selecciona la opcion deseada"),
           actions: <Widget>[
             FlatButton(
               child: new Text("Cancelar"),
@@ -56,9 +60,17 @@ class _ConfiguracionMateriasState extends State<ConfiguracionMaterias> {
             ),
             FlatButton(
               child: new Text("Modificar"),
-              onPressed: () async{
+              onPressed: () async {
                 Navigator.of(context).pop();
-                Materia temp = await Navigator.push(context, MaterialPageRoute(builder: (context) => AgregarMateria(temp: materia,)));
+                Materia temp = await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => AgregarMateria(
+                              temp: materia,
+                            )));
+                if(temp == null){
+                  return;
+                }
                 bloc.update(temp);
               },
             ),
@@ -78,44 +90,51 @@ class _ConfiguracionMateriasState extends State<ConfiguracionMaterias> {
   @override
   Widget build(BuildContext context) {
     return Container(
+      padding: EdgeInsets.only(top: 70),
       child: Column(
         children: <Widget>[
-          Container(
-            width: double.infinity,
-            height: 88,
-            child: Align(
-              alignment: Alignment.bottomCenter,
-              child: botonMas(),
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: <Widget>[
+              botonMas(),
+              Padding(
+                padding: EdgeInsets.only(right: 25),
+              )
+            ],
           ),
           Padding(
             padding: EdgeInsets.only(top: 100),
           ),
-
           Expanded(
             child: StreamBuilder<List<Materia>>(
               stream: bloc.materias,
-              builder: (BuildContext context,AsyncSnapshot<List<Materia>> snapshot){
-                  if(snapshot.hasData){
-                    return ListView.builder(
-                      itemCount: snapshot.data.length,
-                      itemBuilder: (BuildContext context, int index){
-                        Materia item = snapshot.data[index];
-                        return ListTile(
-                          title: Text(item.nombre),
-                          leading: CircleColor(color: Color(item.color),circleSize: 30,),
-                          onLongPress: () {_eleminarMateria(item);},
-                        );
-                      },
-                    );
-                  }
-                  else{
-                    return Center(child: CircularProgressIndicator(),);
-                  }
+              builder: (BuildContext context,
+                  AsyncSnapshot<List<Materia>> snapshot) {
+                if (snapshot.hasData) {
+                  return ListView.builder(
+                    itemCount: snapshot.data.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      Materia item = snapshot.data[index];
+                      return ListTile(
+                        title: Text(item.nombre),
+                        leading: CircleColor(
+                          color: Color(item.color),
+                          circleSize: 30,
+                        ),
+                        onLongPress: () {
+                          _eleminarMateria(item);
+                        },
+                      );
+                    },
+                  );
+                } else {
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
               },
             ),
           )
-        
         ],
       ),
     );
