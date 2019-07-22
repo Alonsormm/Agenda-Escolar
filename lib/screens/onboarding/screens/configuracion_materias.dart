@@ -1,4 +1,5 @@
 import 'package:agenda_escolar/models/materia.dart';
+import 'package:agenda_escolar/models/modulo.dart';
 import 'package:agenda_escolar/screens/nuevos_elementos/agregar_materia.dart';
 import 'package:agenda_escolar/utils/blocs/materias_bloc.dart';
 import 'package:flutter/material.dart';
@@ -62,11 +63,13 @@ class _ConfiguracionMateriasState extends State<ConfiguracionMaterias> {
               child: new Text("Modificar"),
               onPressed: () async {
                 Navigator.of(context).pop();
+                List<Modulo> pureba= [Modulo(id: 0, idDia: 1, horaDeInicio: "10:00", horaDeFinal: "11:30", idLocalizacion: 0, idMateria: materia.id), Modulo(id: 0, idDia: 2, horaDeInicio: "10:00", horaDeFinal: "11:30", idLocalizacion: 0, idMateria: materia.id)];
                 Materia temp = await Navigator.push(
                     context,
                     MaterialPageRoute(
                         builder: (context) => AgregarMateria(
                               temp: materia,
+                              modulos: pureba,
                             )));
                 if(temp == null){
                   return;

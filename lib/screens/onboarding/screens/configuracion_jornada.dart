@@ -25,22 +25,11 @@ class ConfiguracionJornada extends StatefulWidget {
 
 class _ConfiguracionJornadaState extends State<ConfiguracionJornada> {
 
-  Map<String, bool> dias = {
-    "Lunes": true,
-    "Martes": true,
-    "Miercoles": true,
-    "Jueves": true,
-    "Viernes": true,
-    "Sabado": false,
-    "Domingo": false
-  };
-
   Future<bool> guardarDatos()async {
     int duracion = keyFinal.currentState.controladorTemp.difference(keyInicio.currentState.controladorTemp).inDays + 1;
     if(duracion-1 > 0){
       Jornada temp = Jornada(id: 0, duracion: duracion);
       await DBProvider.db.nuevaJornada(temp);
-      await DBProvider.db.diasDeMapa(dias);
       return true;
     }
     else{
@@ -59,6 +48,7 @@ class _ConfiguracionJornadaState extends State<ConfiguracionJornada> {
   Widget build(BuildContext context) {
     return Container(
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Padding(
             padding: EdgeInsets.only(top: 100),
@@ -71,32 +61,9 @@ class _ConfiguracionJornadaState extends State<ConfiguracionJornada> {
           Text("Seleccione la fecha en la cual finaliza su ciclo escolar"),
           BotonCalendario(key:keyFinal,),
           Text("Seleccione los dias de la semana que va a la escuela"),
-          _listaDeDias(),
-          Padding(
-            padding: EdgeInsets.only(top: 40),
-          ),
         ],
       ),
     );
   }
 
-  Widget _listaDeDias() {
-    return Expanded(
-      child: ListView(
-        padding: EdgeInsets.only(left: 50, right: 50),
-        children: dias.keys.map((String dia) {
-          return CheckboxListTile(
-            title: Text(dia),
-            value: dias[dia],
-            activeColor: Colors.black,
-            onChanged: (bool value) {
-              setState(() {
-                dias[dia] = value;
-              });
-            },
-          );
-        }).toList(),
-      ),
-    );
-  }
 }

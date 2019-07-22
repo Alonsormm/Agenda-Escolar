@@ -1,12 +1,16 @@
+import 'package:agenda_escolar/models/modulo.dart';
+import 'package:agenda_escolar/utils/database_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:agenda_escolar/models/materia.dart';
 import 'package:flutter_material_color_picker/flutter_material_color_picker.dart';
+import 'agregar_modulos_materia.dart';
 import 'dart:math';
 
 class AgregarMateria extends StatefulWidget {
   final Materia temp;
+  final List<Modulo> modulos;
 
-  AgregarMateria({this.temp});
+  AgregarMateria({this.temp, this.modulos});
 
   final _AgregarMateriaState state = _AgregarMateriaState();
 
@@ -17,78 +21,57 @@ class AgregarMateria extends StatefulWidget {
 class _AgregarMateriaState extends State<AgregarMateria> {
   TextEditingController nombreMateria = TextEditingController();
   int id = -1;
-  Color colorActual = Color((Random().nextDouble() * 0xFFFFFF).toInt() << 0).withOpacity(1.0);
+  Color colorActual =
+      Color((Random().nextDouble() * 0xFFFFFF).toInt() << 0).withOpacity(1.0);
+  final keyModulos = GlobalKey<_AgregarMateriaState>(debugLabel: 'modulosMateria');
+
+  List<Modulo> modulos;
   @override
-  initState(){
+  initState() {
     super.initState();
-    if(widget.temp != null){
+    if (widget.temp != null) {
       colorActual = Color(widget.temp.color);
       nombreMateria.text = widget.temp.nombre;
       id = widget.temp.id;
+      modulos = widget.modulos;
     }
   }
 
-  bool comprobar(){
-    if(nombreMateria.text != "")
+  bool comprobar() {
+    if (nombreMateria.text != "")
       return true;
-    else{
+    else {
       nombreMateria.text = nombreMateria.text.trimRight();
       return false;
     }
   }
 
-  
-
   Widget _botonGuardar() {
-    return Container(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: <Widget>[
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: <Widget>[
-              
-              FlatButton(
-                child: Text("Guardar"),
-                onPressed: (){
-                  if(comprobar()){
-                    Materia temp;
-                    if(id != -1){
-                      temp = Materia(id: id, nombre: nombreMateria.text, color: colorActual.value);
-                    }
-                    else{
-                      temp = Materia(id: -1, nombre: nombreMateria.text, color: colorActual.value);
-                    }
-                    Navigator.pop(context,temp);
-                  }
-                },
-              )
-            ],
-          )
-        ],
-      ),
+    return FlatButton(
+      child: Text("Guardar"),
+      onPressed: () async {
+        if (comprobar()) {
+          Materia temp;
+          if (id != -1) {
+            temp = Materia(
+                id: id, nombre: nombreMateria.text, color: colorActual.value);
+          } else {
+            id = await DBProvider.db.obtenerIdMaxMateria();
+            temp = Materia(
+                id: id, nombre: nombreMateria.text, color: colorActual.value);
+          }
+          Navigator.pop(context, temp);
+        }
+      },
     );
   }
 
   Widget _botonCancelar() {
-    return Container(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: <Widget>[
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              
-              FlatButton(
-                child: Text("Cancelar"),
-                onPressed: (){ 
-                  Navigator.pop(context,null);
-                },
-              )
-            ],
-          )
-        ],
-      ),
+    return FlatButton(
+      child: Text("Cancelar"),
+      onPressed: () {
+        Navigator.pop(context, null);
+      },
     );
   }
 
@@ -174,23 +157,39 @@ class _AgregarMateriaState extends State<AgregarMateria> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        child: Stack(
-          children: <Widget>[
-            Column(
-              children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.only(top: 100),
+        child: Container(
+          child: ListView(
+            children: <Widget>[
+              Padding(
+                padding: EdgeInsets.only(top: 20),
+              ),
+              Card(
+                child: Column(
+                  children: <Widget>[
+                    rowNombreMateria(),
+                    Padding(
+                      padding: EdgeInsets.only(top: 10),
+                    ),
+                    rowColorMateria(),
+                    Padding(
+                      padding: EdgeInsets.only(bottom: 10),
+                    ),
+                  ],
                 ),
-                rowNombreMateria(),
-                Padding(
-                  padding: EdgeInsets.only(top: 10),
+              ),
+              AgregarModulosMateria(key: keyModulos,modulos: modulos,),
+              Align(
+                alignment: Alignment.bottomRight,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    _botonCancelar(),
+                    _botonGuardar(),
+                  ],
                 ),
-                rowColorMateria(),
-              ],
-            ),
-            _botonGuardar(),
-            _botonCancelar(),
-          ],
+              ),
+            ],
+          ),
         ),
       ),
     );

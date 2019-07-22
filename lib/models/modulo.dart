@@ -4,9 +4,9 @@ class Modulo{
   final int idLocalizacion;
   final int idDia;
   final String horaDeInicio;
-  final String horaDefinal;
+  final String horaDeFinal;
 
-  Modulo({this.id,this.idMateria,this.idLocalizacion,this.idDia,this.horaDeInicio,this.horaDefinal});
+  Modulo({this.id,this.idMateria,this.idLocalizacion,this.idDia,this.horaDeInicio,this.horaDeFinal});
 
   factory Modulo.fromJson(Map<String,dynamic> json) => Modulo(
     id: json["id"],
@@ -14,7 +14,7 @@ class Modulo{
     idLocalizacion: json["idLocalizacion"],
     idDia: json["idDia"],
     horaDeInicio: json["horaDeInicio"],
-    horaDefinal : json["horaDeFinal"],
+    horaDeFinal : json["horaDeFinal"],
   );
   Map<String,dynamic> toJson() => {
     "id": id,
@@ -22,6 +22,6 @@ class Modulo{
     "idLocalizacion": idLocalizacion,
     "idDia": idDia,
     "horaDeInicio": horaDeInicio,
-    "horaDefinal": horaDefinal
+    "horaDefinal": horaDeFinal
   };
 }

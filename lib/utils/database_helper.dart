@@ -88,8 +88,12 @@ class DBProvider{
       await db.execute("CREATE TABLE $materiaTable ($columnId INTEGER PRIMARY KEY, $columnNombre TEXT, $columnColor INTEGER)");
       await db.execute("CREATE TABLE $localizacionTable ($columnId INTEGER PRIMARY KEY, $columnEdificio TEXT, $columnSalon TEXT)");
       await db.execute("CREATE TABLE $jornadaTable ($columnId INTEGER PRIMARY KEY,$columnDuracion INTEGER, $columnNumeroDias INTEGER)");
-      await db.execute("CREATE TABLE $diaTable ($columnId INTEGER PRIMARY KEY, $columnDiaActivo INTEGER, $columnIdJornada INTEGER, FOREIGN KEY ($columnIdJornada) REFERENCES $jornadaTable($columnId))");
+      await db.execute("CREATE TABLE $diaTable ($columnId INTEGER PRIMARY KEY)");
       await db.execute("CREATE TABLE $moduloTable ($columnId INTEGER PRIMARY KEY, $columnIdMateria INTEGER, $columnIdLocalizacion INTEGER, $columnIdDia INTEGER, $columnHoraDeInicio TEXT, $columnHoraDeFinal TEXT, FOREIGN KEY ($columnIdMateria) REFERENCES $materiaTable($columnId), FOREIGN KEY ($columnIdLocalizacion) REFERENCES $localizacionTable($columnId) ,FOREIGN KEY ($columnIdDia) REFERENCES $diaTable($columnId))");
+      for(int i = 1 ; i < 8; i++){
+        Dia temp = Dia(id:i);
+        nuevoDia(temp);
+      }
     });
   }
 
@@ -104,6 +108,18 @@ class DBProvider{
         " VALUES (?,?,?)",
         [id, materia.nombre, materia.color]);
     return raw;
+  }
+
+  nuevaMateriaM(Materia materia)async{
+    final db = await database;
+    await db.insert(materiaTable, materia.toJson());
+  }
+
+  obtenerIdMaxMateria()async{
+    final db = await database;
+    var table = await db.rawQuery("SELECT MAX(id)+1 as id FROM $materiaTable");
+    int id = table.first["id"];
+    return id;
   }
 
   obtenerMateria(int id) async{
@@ -272,7 +288,14 @@ class DBProvider{
 
   nuevaModulo(Modulo modulo) async{
     final db = await database;
-    await db.insert(moduloTable, modulo.toJson());
+    var table = await db.rawQuery("SELECT MAX(id)+1 as id FROM Client");
+    int id = table.first["id"];
+    var raw = await db.rawInsert(
+        "INSERT Into Client (?,?,?,?,?,?)"
+        " VALUES (?,?,?,?,?,?)",
+        [columnId,columnIdMateria, columnIdLocalizacion, columnIdDia, columnHoraDeInicio, columnHoraDeFinal,id,modulo.idMateria,modulo.idLocalizacion,modulo.idDia, modulo.horaDeInicio, modulo.horaDeFinal]);
+    return raw;
+
   }
 
   obtenerModulo(int id) async{
@@ -284,6 +307,17 @@ class DBProvider{
   obtenerTodosLosModulos() async{
     final db = await database;
     var res = await db.rawQuery("SELECT * FROM $moduloTable");
+    List<Modulo> lista = List<Modulo>(); 
+    for(int i = 0 ; i < res.length; i++){
+      Modulo temp = Modulo.fromJson(res[i]);
+      lista.add(temp);
+    }
+    return lista;
+  }
+
+  obtenerTodosLosModulosPorMateria(int idMateria)async{
+    final db = await database;
+    var res = await db.rawQuery("SELECT * FROM $moduloTable where $columnIdMateria = $idMateria");
     List<Modulo> lista = List<Modulo>(); 
     for(int i = 0 ; i < res.length; i++){
       Modulo temp = Modulo.fromJson(res[i]);
@@ -318,21 +352,6 @@ class DBProvider{
   actualizarDia(Dia dia) async{
     final db = await database;
     await db.update(diaTable, dia.toJson(),where: "id = ?", whereArgs: [dia.id]);
-  }
-
-  diasDeMapa(Map<String, bool>dias) async{
-    List<String> keys = dias.keys.toList();
-    for(int i = 0; i < keys.length; i++){
-      int activo;
-      if(dias[keys[i]]){
-        activo = 1;
-      }
-      else{
-        activo = 0;
-      }
-      Dia temp = Dia(id: i, idJornada: 0, diaActivo: activo);
-      await nuevoDia(temp);
-    }
   }
 
   eliminarDia(int id)async{

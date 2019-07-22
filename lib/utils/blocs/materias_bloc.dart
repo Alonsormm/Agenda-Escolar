@@ -31,7 +31,7 @@ class MateriasBloc{
   }
 
   add(Materia materia)async{
-    await DBProvider.db.nuevaMateria(materia);
+    await DBProvider.db.nuevaMateriaM(materia);
     getMaterias();
   } 
 
