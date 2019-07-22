@@ -1,3 +1,4 @@
+import 'package:agenda_escolar/models/localizacion.dart';
 import 'package:agenda_escolar/models/modulo.dart';
 import 'package:agenda_escolar/utils/database_helper.dart';
 import 'package:flutter/material.dart';
@@ -10,20 +11,21 @@ class AgregarMateria extends StatefulWidget {
   final Materia materia;
   final List<Modulo> modulos;
 
+
   AgregarMateria({this.materia, this.modulos});
 
-  final _AgregarMateriaState state = _AgregarMateriaState();
+  final AgregarMateriaState state = AgregarMateriaState();
 
   @override
-  _AgregarMateriaState createState() => state;
+  AgregarMateriaState createState() => state;
 }
 
-class _AgregarMateriaState extends State<AgregarMateria> {
+class AgregarMateriaState extends State<AgregarMateria> {
   TextEditingController nombreMateria = TextEditingController();
   int id = -1;
   Color colorActual =
       Color((Random().nextDouble() * 0xFFFFFF).toInt() << 0).withOpacity(1.0);
-  final keyModulos = GlobalKey<_AgregarMateriaState>(debugLabel: 'modulosMateria');
+  final keyModulos = GlobalKey<AgregarModulosMateriaState>(debugLabel: 'modulosMateria');
 
   List<Modulo> modulos;
   @override
@@ -51,16 +53,18 @@ class _AgregarMateriaState extends State<AgregarMateria> {
       child: Text("Guardar"),
       onPressed: () async {
         if (comprobar()) {
-          Materia temp;
+          Materia tempMateria;
           if (id != -1) {
-            temp = Materia(
+            tempMateria = Materia(
                 id: id, nombre: nombreMateria.text, color: colorActual.value);
           } else {
-            id = await DBProvider.db.obtenerIdMaxMateria();
-            temp = Materia(
+            List<int> idLugares = keyModulos.currentState.obtenerValue();
+            int idMateria = await DBProvider.db.obtenerIdMaxMateria();
+            keyModulos.currentState.guardarModulo(idLugares, idMateria);
+            tempMateria = Materia(
                 id: id, nombre: nombreMateria.text, color: colorActual.value);
           }
-          Navigator.pop(context, temp);
+          Navigator.pop(context, tempMateria);
         }
       },
     );

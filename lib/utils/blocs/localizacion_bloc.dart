@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
 
 import 'package:agenda_escolar/utils/database_helper.dart';
 import 'package:agenda_escolar/models/localizacion.dart';
@@ -22,7 +21,7 @@ class LocalizacionesBloc{
     getLocalizaciones();
   }
 
-  delate(int id)async{
+  delete(int id)async{
     await DBProvider.db.eliminarLocalizacion(id);
     getLocalizaciones();
   }

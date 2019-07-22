@@ -2,6 +2,7 @@ import 'package:agenda_escolar/models/materia.dart';
 import 'package:agenda_escolar/models/modulo.dart';
 import 'package:agenda_escolar/screens/nuevos_elementos/agregar_materia.dart';
 import 'package:agenda_escolar/utils/blocs/materias_bloc.dart';
+import 'package:agenda_escolar/utils/database_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_material_color_picker/flutter_material_color_picker.dart';
 
@@ -31,17 +32,17 @@ class _ConfiguracionMateriasState extends State<ConfiguracionMaterias> {
             icon: Icon(
               Icons.add_circle_outline,
             ),
-            onPressed: (){},
+            onPressed: null,
           ),
         ],
       ),
       onTap: () async {
         Materia temp = await Navigator.push(
             context, MaterialPageRoute(builder: (context) => AgregarMateria()));
-        if(temp == null){
+        bloc.add(temp);
+        if (temp == null) {
           return;
         }
-        bloc.add(temp);
       },
     );
   }
@@ -62,19 +63,14 @@ class _ConfiguracionMateriasState extends State<ConfiguracionMaterias> {
             FlatButton(
               child: new Text("Modificar"),
               onPressed: () async {
-                List<Modulo> tempM = List<Modulo>();
-                tempM.add(Modulo(id: 0, horaDeInicio: "10:00", horaDeFinal: "10:30", idDia: 1));
                 Navigator.of(context).pop();
                 Materia temp = await Navigator.push(
                     context,
-                    //Agregar aqui la lista de modulos
-                    
                     MaterialPageRoute(
                         builder: (context) => AgregarMateria(
                               materia: materia,
-                              modulos: tempM,
                             )));
-                if(temp == null){
+                if (temp == null) {
                   return;
                 }
                 bloc.update(temp);
@@ -82,13 +78,44 @@ class _ConfiguracionMateriasState extends State<ConfiguracionMaterias> {
             ),
             FlatButton(
               child: new Text("Eliminar"),
-              onPressed: () {
+              onPressed: () async {
                 bloc.delete(materia.id);
+                await DBProvider.db.eliminarModulosPorMateria(materia);
                 Navigator.of(context).pop();
               },
             ),
           ],
         );
+      },
+    );
+  }
+  Widget modulosTexto(List<Modulo> listModulo) {
+    List<String>semana = ["Lunes", "Martes","Miercoles", "Jueves","Viernes", "Sabado", "Domingo"];
+    String cadena = "";
+    for (int i = 0; i < listModulo.length; i++) {
+      cadena += semana[listModulo[i].idDia-1] + ": " +  listModulo[i].horaDeInicio + "-" + listModulo[i].horaDeFinal + " ";
+    }
+    return Text(cadena);
+  }
+
+  Widget modulosSubtitle(Materia item) {
+    return FutureBuilder(
+      future: DBProvider.db.obtenerTodosLosModulosPorMateria(item.id),
+      builder: (context, snapshot) {
+        switch (snapshot.connectionState) {
+          case ConnectionState.none:
+            return CircularProgressIndicator();
+            break;
+          case ConnectionState.waiting:
+            return CircularProgressIndicator();
+            break;
+          case ConnectionState.active:
+            return CircularProgressIndicator();
+            break;
+          case ConnectionState.done:
+            return modulosTexto(snapshot.data);
+            break;
+        }
       },
     );
   }
@@ -118,15 +145,18 @@ class _ConfiguracionMateriasState extends State<ConfiguracionMaterias> {
                     itemCount: snapshot.data.length,
                     itemBuilder: (BuildContext context, int index) {
                       Materia item = snapshot.data[index];
-                      return ListTile(
-                        title: Text(item.nombre),
-                        leading: CircleColor(
-                          color: Color(item.color),
-                          circleSize: 30,
+                      return Card(
+                        child: ListTile(
+                          title: Text(item.nombre),
+                          subtitle: modulosSubtitle(item),
+                          leading: CircleColor(
+                            color: Color(item.color),
+                            circleSize: 30,
+                          ),
+                          onLongPress: () {
+                            _eleminarMateria(item);
+                          },
                         ),
-                        onLongPress: () {
-                          _eleminarMateria(item);
-                        },
                       );
                     },
                   );

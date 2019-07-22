@@ -81,7 +81,7 @@ class DBProvider{
   initDB() async{
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
     String path = join(documentsDirectory.path, "AgendaEscol.db");
-    return await openDatabase(path, version: 1, onOpen: (db) {
+    return await openDatabase(path, version: 2, onOpen: (db) {
     }, onCreate: (Database db, int version) async {
       await db.execute("CREATE TABLE $tareaTable ($columnId INTEGER PRIMARY KEY, $columnIdMateria INTEGER,$columnNombre TEXT,$columnDescripcion TEXT,$columnFechaDeEntrega TEXT,$columnAcabado INTEGER, FOREIGN KEY ($columnIdMateria) REFERENCES $materiaTable($columnId))");
       await db.execute("CREATE TABLE $proyectoTable ($columnId INTEGER PRIMARY KEY, $columnIdMateria INTEGER,$columnNombre TEXT,$columnDescripcion TEXT,$columnFechaDeEntrega TEXT,$columnAcabado INTEGER, FOREIGN KEY ($columnIdMateria) REFERENCES $materiaTable($columnId))");
@@ -102,12 +102,12 @@ class DBProvider{
 
   nuevaMateria(Materia materia) async{
     final db = await database;
-    var table = await db.rawQuery("SELECT MAX(id)+1 as id FROM $materiaTable");
+    var table = await db.rawQuery("SELECT MAX(id)+1 FROM $materiaTable");
     int id = table.first["id"];
     var raw = await db.rawInsert(
-        "INSERT Into $materiaTable (id,$columnNombre,$columnMismaHora,$columnColor)"
-        " VALUES (?,?,?, ?)",
-        [id, materia.nombre,materia.mismaHora, materia.color]);
+        "INSERT Into $materiaTable ($columnNombre,$columnMismaHora,$columnColor)"
+        " VALUES (?,?, ?)",
+        [materia.nombre,materia.mismaHora, materia.color]);
     return raw;
   }
 
@@ -118,9 +118,13 @@ class DBProvider{
 
   obtenerIdMaxMateria()async{
     final db = await database;
-    var table = await db.rawQuery("SELECT MAX(id)+1 as id FROM $materiaTable");
-    int id = table.first["id"];
-    return id;
+    var table = await db.rawQuery("SELECT * FROM $materiaTable ORDER BY id DESC LIMIT 1");
+    if(table.isEmpty){
+      return 1;
+    }
+    else{
+      return table[0]["id"];
+    }
   }
 
   obtenerMateria(int id) async{
@@ -255,12 +259,12 @@ class DBProvider{
 
   nuevaLocalizacion(Localizacion localizacion) async{
     final db = await database;
-    var table = await db.rawQuery("SELECT MAX(id)+1 as id FROM $materiaTable");
+    var table = await db.rawQuery("SELECT MAX(id)+1 FROM $materiaTable");
     int id = table.first["id"];
     var raw = await db.rawInsert(
-        "INSERT Into ? (id,?)"
+        "INSERT Into $localizacionTable (id,$columnSalon)"
         " VALUES (?,?)",
-        [localizacionTable, columnSalon, id, localizacion.salon]);
+        [id, localizacion.salon]);
     return raw;
   }
 
@@ -295,12 +299,12 @@ class DBProvider{
 
   nuevaModulo(Modulo modulo) async{
     final db = await database;
-    var table = await db.rawQuery("SELECT MAX(id)+1 as id FROM Client");
+    var table = await db.rawQuery("SELECT MAX(id)+1 FROM $moduloTable");
     int id = table.first["id"];
     var raw = await db.rawInsert(
-        "INSERT Into Client (?,?,?,?,?,?)"
+        "INSERT Into $Modulo($columnId,$columnIdMateria,$columnIdLocalizacion,$columnIdDia,$columnHoraDeInicio,$columnHoraDeFinal)"
         " VALUES (?,?,?,?,?,?)",
-        [columnId,columnIdMateria, columnIdLocalizacion, columnIdDia, columnHoraDeInicio, columnHoraDeFinal,id,modulo.idMateria,modulo.idLocalizacion,modulo.idDia, modulo.horaDeInicio, modulo.horaDeFinal]);
+        [id,modulo.idMateria,modulo.idLocalizacion,modulo.idDia, modulo.horaDeInicio, modulo.horaDeFinal]);
     return raw;
 
   }
@@ -341,6 +345,11 @@ class DBProvider{
   eliminarModulo(int id)async{
     final db = await database;
     db.delete(moduloTable,where: "id = ?", whereArgs: [id]);
+  }
+
+  eliminarModulosPorMateria(Materia materia)async{
+    final db = await database;
+    db.rawDelete("Delete from $moduloTable where $columnIdMateria = ${materia.id}"); 
   }
 
   //CRUD Dia
