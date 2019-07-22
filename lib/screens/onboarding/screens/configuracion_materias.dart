@@ -62,14 +62,17 @@ class _ConfiguracionMateriasState extends State<ConfiguracionMaterias> {
             FlatButton(
               child: new Text("Modificar"),
               onPressed: () async {
+                List<Modulo> tempM = List<Modulo>();
+                tempM.add(Modulo(id: 0, horaDeInicio: "10:00", horaDeFinal: "10:30", idDia: 1));
                 Navigator.of(context).pop();
-                List<Modulo> pureba= [Modulo(id: 0, idDia: 1, horaDeInicio: "10:00", horaDeFinal: "11:30", idLocalizacion: 0, idMateria: materia.id), Modulo(id: 0, idDia: 2, horaDeInicio: "10:00", horaDeFinal: "11:30", idLocalizacion: 0, idMateria: materia.id)];
                 Materia temp = await Navigator.push(
                     context,
+                    //Agregar aqui la lista de modulos
+                    
                     MaterialPageRoute(
                         builder: (context) => AgregarMateria(
-                              temp: materia,
-                              modulos: pureba,
+                              materia: materia,
+                              modulos: tempM,
                             )));
                 if(temp == null){
                   return;
@@ -104,9 +107,6 @@ class _ConfiguracionMateriasState extends State<ConfiguracionMaterias> {
                 padding: EdgeInsets.only(right: 25),
               )
             ],
-          ),
-          Padding(
-            padding: EdgeInsets.only(top: 100),
           ),
           Expanded(
             child: StreamBuilder<List<Materia>>(

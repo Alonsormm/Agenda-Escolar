@@ -28,6 +28,12 @@ class BotonHoraState extends State<BotonHora> {
     }
   }
 
+  void setHora(String hora){
+    setState(() {
+      controlador = TimeOfDay(hour: int.parse(widget.hora.split(":")[0]) ,minute:int.parse(widget.hora.split(":")[1]) );
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return FlatButton(

@@ -1,9 +1,6 @@
 import 'package:agenda_escolar/components/boton_hora.dart';
 import 'package:flutter/material.dart';
-import 'package:agenda_escolar/utils/database_helper.dart';
-import 'package:agenda_escolar/models/materia.dart';
 import 'package:agenda_escolar/models/modulo.dart';
-import 'package:agenda_escolar/utils/blocs/modulos_materia_bloc.dart';
 
 final keyDialog = GlobalKey<_DialogDiasState>(debugLabel: 'dialogDias');
 
@@ -46,6 +43,8 @@ class _AgregarModulosMateriaState extends State<AgregarModulosMateria> {
 
   List<List<GlobalKey<BotonHoraState>>> keys;
 
+  List<List<BotonHora>> listBotonHora = List<List<BotonHora>>();
+
   initState() {
     super.initState();
     keys = [
@@ -61,6 +60,18 @@ class _AgregarModulosMateriaState extends State<AgregarModulosMateria> {
       List<Modulo> modulos = widget.modulos;
       completarDias(modulos);
       modificarCadena();
+      crearBotonesHora(modulos);
+    }
+    else{
+      listBotonHora = [
+      [BotonHora(key: keys[0][0],),BotonHora(key: keys[0][1],)],
+      [BotonHora(key: keys[1][0],),BotonHora(key: keys[1][1],)],
+      [BotonHora(key: keys[2][0],),BotonHora(key: keys[2][1],)],
+      [BotonHora(key: keys[3][0],),BotonHora(key: keys[3][1],)],
+      [BotonHora(key: keys[4][0],),BotonHora(key: keys[4][1],)],
+      [BotonHora(key: keys[5][0],),BotonHora(key: keys[5][1],)],
+      [BotonHora(key: keys[6][0],),BotonHora(key: keys[6][1],)],
+    ];
     }
   }
 
@@ -71,10 +82,23 @@ class _AgregarModulosMateriaState extends State<AgregarModulosMateria> {
       print(id);
       setState(() {
         dias[keysDias[id - 1]] = true;
-        print(dias[keysDias[id - 1]]);
-        //keys[i - i][0].currentState.hora = modulos[i].horaDeInicio;
-        //keys[i - i][1].currentState.hora = modulos[i].horaDeInicio;
       });
+    }
+  }
+
+  void crearBotonesHora(List<Modulo> modulos){
+    List<int> ids = List<int>();
+    for(int i = 0; i < modulos.length; i++){
+      ids.add(modulos[0].idDia);
+      print(ids);
+    }
+    for(int i = 0; i < 7; i++){
+      if(ids.indexOf(i+1) == -1){
+        listBotonHora.add([BotonHora(key: keys[i][0]),BotonHora(key: keys[i][1])]);
+      }
+      else{
+        listBotonHora.add([BotonHora(key: keys[i][0], hora: modulos[i].horaDeInicio),BotonHora(key: keys[i][1],hora: modulos[i].horaDeFinal)]);
+      }
     }
   }
 
@@ -177,13 +201,9 @@ class _AgregarModulosMateriaState extends State<AgregarModulosMateria> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   Text("Hora"),
-                  BotonHora(
-                    key: keys[i][0],
-                  ),
+                  listBotonHora[i][0],
                   Text("Hora"),
-                  BotonHora(
-                    key: keys[i][1],
-                  ),
+                  listBotonHora[i][1],
                 ],
               )
             ],

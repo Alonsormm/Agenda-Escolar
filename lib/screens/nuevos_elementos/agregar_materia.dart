@@ -7,10 +7,10 @@ import 'agregar_modulos_materia.dart';
 import 'dart:math';
 
 class AgregarMateria extends StatefulWidget {
-  final Materia temp;
+  final Materia materia;
   final List<Modulo> modulos;
 
-  AgregarMateria({this.temp, this.modulos});
+  AgregarMateria({this.materia, this.modulos});
 
   final _AgregarMateriaState state = _AgregarMateriaState();
 
@@ -29,10 +29,10 @@ class _AgregarMateriaState extends State<AgregarMateria> {
   @override
   initState() {
     super.initState();
-    if (widget.temp != null) {
-      colorActual = Color(widget.temp.color);
-      nombreMateria.text = widget.temp.nombre;
-      id = widget.temp.id;
+    if (widget.materia != null) {
+      colorActual = Color(widget.materia.color);
+      nombreMateria.text = widget.materia.nombre;
+      id = widget.materia.id;
       modulos = widget.modulos;
     }
   }
