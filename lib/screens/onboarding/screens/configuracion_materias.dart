@@ -63,12 +63,14 @@ class _ConfiguracionMateriasState extends State<ConfiguracionMaterias> {
             FlatButton(
               child: new Text("Modificar"),
               onPressed: () async {
+                List<Modulo> listModulos = await DBProvider.db.obtenerTodosLosModulosPorMateria(materia.id);
                 Navigator.of(context).pop();
                 Materia temp = await Navigator.push(
                     context,
                     MaterialPageRoute(
                         builder: (context) => AgregarMateria(
                               materia: materia,
+                              modulos: listModulos,
                             )));
                 if (temp == null) {
                   return;
@@ -114,6 +116,9 @@ class _ConfiguracionMateriasState extends State<ConfiguracionMaterias> {
             break;
           case ConnectionState.done:
             return modulosTexto(snapshot.data);
+            break;
+          default:
+            return Container();
             break;
         }
       },

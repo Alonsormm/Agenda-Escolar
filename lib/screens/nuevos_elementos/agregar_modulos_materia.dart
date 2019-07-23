@@ -8,8 +8,9 @@ final keyDialog = GlobalKey<_DialogDiasState>(debugLabel: 'dialogDias');
 
 class AgregarModulosMateria extends StatefulWidget {
   final List<Modulo> modulos;
+  final bool mismaHora;
 
-  AgregarModulosMateria({Key key, this.modulos}) : super(key: key);
+  AgregarModulosMateria({Key key, this.modulos, this.mismaHora}) : super(key: key);
   @override
   AgregarModulosMateriaState createState() => AgregarModulosMateriaState();
 }
@@ -63,6 +64,7 @@ class AgregarModulosMateriaState extends State<AgregarModulosMateria> {
     ];
     if (widget.modulos != null) {
       List<Modulo> modulos = widget.modulos;
+      mismaHora = widget.mismaHora;
       completarDias(modulos);
       modificarCadena();
       crearBotonesHora(modulos);

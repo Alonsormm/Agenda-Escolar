@@ -44,6 +44,7 @@ class DBProvider{
   final String materiaTable = "Materia";
   final String columnColor = "color";
   final String columnMismaHora = "mismaHora";
+  final String columnMismoSalon = "mismoSalon";
 
   //Tabla: Localizacion
   final String localizacionTable = "Localizacion";
@@ -80,13 +81,13 @@ class DBProvider{
 
   initDB() async{
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
-    String path = join(documentsDirectory.path, "AgendaEscol.db");
+    String path = join(documentsDirectory.path, "AgendaEscola.db");
     return await openDatabase(path, version: 2, onOpen: (db) {
     }, onCreate: (Database db, int version) async {
       await db.execute("CREATE TABLE $tareaTable ($columnId INTEGER PRIMARY KEY, $columnIdMateria INTEGER,$columnNombre TEXT,$columnDescripcion TEXT,$columnFechaDeEntrega TEXT,$columnAcabado INTEGER, FOREIGN KEY ($columnIdMateria) REFERENCES $materiaTable($columnId))");
       await db.execute("CREATE TABLE $proyectoTable ($columnId INTEGER PRIMARY KEY, $columnIdMateria INTEGER,$columnNombre TEXT,$columnDescripcion TEXT,$columnFechaDeEntrega TEXT,$columnAcabado INTEGER, FOREIGN KEY ($columnIdMateria) REFERENCES $materiaTable($columnId))");
       await db.execute("CREATE TABLE $examenTable ($columnId INTEGER PRIMARY KEY, $columnIdMateria INTEGER,$columnDescripcion TEXT,$columnFechaDeEntrega TEXT,$columnAcabado INTEGER, FOREIGN KEY ($columnIdMateria) REFERENCES $materiaTable($columnId))");
-      await db.execute("CREATE TABLE $materiaTable ($columnId INTEGER PRIMARY KEY, $columnNombre TEXT, $columnMismaHora INTEGER,$columnColor INTEGER)");
+      await db.execute("CREATE TABLE $materiaTable ($columnId INTEGER PRIMARY KEY, $columnNombre TEXT, $columnMismaHora INTEGER,$columnMismoSalon INTEGER,$columnColor INTEGER)");
       await db.execute("CREATE TABLE $localizacionTable ($columnId INTEGER PRIMARY KEY, $columnSalon TEXT)");
       await db.execute("CREATE TABLE $jornadaTable ($columnId INTEGER PRIMARY KEY,$columnDuracion INTEGER, $columnNumeroDias INTEGER)");
       await db.execute("CREATE TABLE $diaTable ($columnId INTEGER PRIMARY KEY)");
@@ -102,8 +103,6 @@ class DBProvider{
 
   nuevaMateria(Materia materia) async{
     final db = await database;
-    var table = await db.rawQuery("SELECT MAX(id)+1 FROM $materiaTable");
-    int id = table.first["id"];
     var raw = await db.rawInsert(
         "INSERT Into $materiaTable ($columnNombre,$columnMismaHora,$columnColor)"
         " VALUES (?,?, ?)",

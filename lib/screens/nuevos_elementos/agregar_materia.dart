@@ -1,4 +1,3 @@
-import 'package:agenda_escolar/models/localizacion.dart';
 import 'package:agenda_escolar/models/modulo.dart';
 import 'package:agenda_escolar/utils/database_helper.dart';
 import 'package:flutter/material.dart';
@@ -25,7 +24,8 @@ class AgregarMateriaState extends State<AgregarMateria> {
   int id = -1;
   Color colorActual =
       Color((Random().nextDouble() * 0xFFFFFF).toInt() << 0).withOpacity(1.0);
-  final keyModulos = GlobalKey<AgregarModulosMateriaState>(debugLabel: 'modulosMateria');
+  final GlobalKey<AgregarModulosMateriaState> keyModulos = GlobalKey<AgregarModulosMateriaState>(debugLabel: 'modulosMateria');
+  bool mismaHora = false;
 
   List<Modulo> modulos;
   @override
@@ -34,6 +34,7 @@ class AgregarMateriaState extends State<AgregarMateria> {
     if (widget.materia != null) {
       colorActual = Color(widget.materia.color);
       nombreMateria.text = widget.materia.nombre;
+      mismaHora = widget.materia.mismaHora == 1 ? true: false;
       id = widget.materia.id;
       modulos = widget.modulos;
     }
@@ -54,15 +55,18 @@ class AgregarMateriaState extends State<AgregarMateria> {
       onPressed: () async {
         if (comprobar()) {
           Materia tempMateria;
+          int mismaHora = keyModulos.currentState.mismaHora ? 1 : 0;
+          int mismoSalon = keyModulos.currentState.keyLocalizacion.currentState.mismoSalon ? 1 : 0;
+          print(mismoSalon);
           if (id != -1) {
             tempMateria = Materia(
-                id: id, nombre: nombreMateria.text, color: colorActual.value);
+                id: id, nombre: nombreMateria.text, color: colorActual.value, mismaHora: mismaHora,mismoSalon: mismoSalon);
           } else {
             List<int> idLugares = keyModulos.currentState.obtenerValue();
             int idMateria = await DBProvider.db.obtenerIdMaxMateria();
             keyModulos.currentState.guardarModulo(idLugares, idMateria);
             tempMateria = Materia(
-                id: id, nombre: nombreMateria.text, color: colorActual.value);
+                id: id, nombre: nombreMateria.text, color: colorActual.value, mismaHora: mismaHora,mismoSalon: mismoSalon);
           }
           Navigator.pop(context, tempMateria);
         }
@@ -181,7 +185,7 @@ class AgregarMateriaState extends State<AgregarMateria> {
                   ],
                 ),
               ),
-              AgregarModulosMateria(key: keyModulos,modulos: modulos,),
+              AgregarModulosMateria(key: keyModulos,modulos: modulos,mismaHora: mismaHora,),
               Align(
                 alignment: Alignment.bottomRight,
                 child: Row(
