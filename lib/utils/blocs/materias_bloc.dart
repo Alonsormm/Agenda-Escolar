@@ -7,13 +7,18 @@ class MateriasBloc{
   final _materiasController = StreamController<List<Materia>>.broadcast();
 
   get materias => _materiasController.stream;
+  bool _isDisposed = false;
 
   dispose(){
     _materiasController.close();
   }
 
   getMaterias() async{
+    if(_isDisposed){
+      return;
+    }
     _materiasController.sink.add(await DBProvider.db.obtenerTodasLasMaterias());
+    _isDisposed = true;
   }
 
   MateriasBloc(){

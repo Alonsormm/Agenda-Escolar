@@ -71,7 +71,7 @@ class _ConfiguracionMateriasState extends State<ConfiguracionMaterias> {
                 Materia temp = await Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => AgregarMateriaController()));
+                        builder: (context) => AgregarMateriaController(materia: materia, listModulo: listModulos,)));
                 if (temp == null) {
                   return;
                 }

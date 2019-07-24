@@ -2,14 +2,12 @@ import 'package:agenda_escolar/models/modulo.dart';
 import 'package:flutter/material.dart';
 import 'package:agenda_escolar/models/materia.dart';
 import 'package:flutter_material_color_picker/flutter_material_color_picker.dart';
-import 'modulos.dart';
 import 'dart:math';
 
 class MateriaPart extends StatefulWidget {
   final Materia materia;
-  final List<Modulo> modulos;
 
-  MateriaPart({this.materia, this.modulos, Key key}): super(key:key);
+  MateriaPart({this.materia, Key key}): super(key:key);
 
   final MateriaPartState state = MateriaPartState();
 
@@ -22,8 +20,6 @@ class MateriaPartState extends State<MateriaPart> {
   int id = -1;
   Color colorActual =
       Color((Random().nextDouble() * 0xFFFFFF).toInt() << 0).withOpacity(1.0);
-  final GlobalKey<ModulosPartState> keyModulos =
-      GlobalKey<ModulosPartState>(debugLabel: 'modulosMateria');
   bool mismaHora = false;
 
   List<Modulo> modulos;
@@ -35,7 +31,6 @@ class MateriaPartState extends State<MateriaPart> {
       nombreMateria.text = widget.materia.nombre;
       mismaHora = widget.materia.mismaHora == 1 ? true : false;
       id = widget.materia.id;
-      modulos = widget.modulos;
     }
   }
 
@@ -49,31 +44,6 @@ class MateriaPartState extends State<MateriaPart> {
       return false;
     }
   }
-
-  /*Widget _botonGuardar() {
-    return FlatButton(
-      child: Text("Guardar"),
-      onPressed: () async {
-        if (comprobar()) {
-          Materia tempMateria;
-          int mismaHora = keyModulos.currentState.mismaHora ? 1 : 0;
-          int mismoSalon = keyModulos.currentState.keyLocalizacion.currentState.mismoSalon ? 1 : 0;
-          print(mismoSalon);
-          if (id != -1) {
-            tempMateria = Materia(
-                id: id, nombre: nombreMateria.text, color: colorActual.value, mismaHora: mismaHora,mismoSalon: mismoSalon);
-          } else {
-            List<int> idLugares = keyModulos.currentState.obtenerValue();
-            int idMateria = await DBProvider.db.obtenerIdMaxMateria();
-            //keyModulos.currentState.guardarModulo(idLugares, idMateria);
-            tempMateria = Materia(
-                id: id, nombre: nombreMateria.text, color: colorActual.value, mismaHora: mismaHora,mismoSalon: mismoSalon);
-          }
-          Navigator.pop(context, tempMateria);
-        }
-      },
-    );
-  }*/
 
   void _elegirColorDialog() {
     showDialog(
@@ -102,7 +72,7 @@ class MateriaPartState extends State<MateriaPart> {
     );
   }
 
-  Widget rowNombreMateria() {
+  Widget _rowNombreMateria() {
     return Row(
       children: <Widget>[
         Padding(
@@ -128,7 +98,7 @@ class MateriaPartState extends State<MateriaPart> {
     );
   }
 
-  Widget rowColorMateria() {
+  Widget _rowColorMateria() {
     return Row(
       children: <Widget>[
         Padding(
@@ -145,7 +115,10 @@ class MateriaPartState extends State<MateriaPart> {
             color: colorActual,
             circleSize: 50,
           ),
-          onTap: () {
+          onTap: (){
+            setState(() {
+              colorActual = Colors.red;
+            });
             _elegirColorDialog();
           },
         ),
@@ -158,11 +131,11 @@ class MateriaPartState extends State<MateriaPart> {
     return Card(
       child: Column(
         children: <Widget>[
-          rowNombreMateria(),
+          _rowNombreMateria(),
           Padding(
             padding: EdgeInsets.only(top: 10),
           ),
-          rowColorMateria(),
+          _rowColorMateria(),
           Padding(
             padding: EdgeInsets.only(bottom: 10),
           ),

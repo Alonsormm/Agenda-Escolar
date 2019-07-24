@@ -23,7 +23,7 @@ class ConfiguracionJornada extends StatefulWidget {
   _ConfiguracionJornadaState createState() => _ConfiguracionJornadaState();
 }
 
-class _ConfiguracionJornadaState extends State<ConfiguracionJornada> {
+class _ConfiguracionJornadaState extends State<ConfiguracionJornada> with AutomaticKeepAliveClientMixin{
 
   Future<bool> guardarDatos()async {
     int duracion = keyFinal.currentState.controladorTemp.difference(keyInicio.currentState.controladorTemp).inDays + 1;
@@ -46,13 +46,11 @@ class _ConfiguracionJornadaState extends State<ConfiguracionJornada> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Container(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          Padding(
-            padding: EdgeInsets.only(top: 100),
-          ),
           Text("Seleccione la fecha en la cual inicia su ciclo escolar"),
           BotonCalendario(key: keyInicio,),
           Padding(
@@ -60,10 +58,13 @@ class _ConfiguracionJornadaState extends State<ConfiguracionJornada> {
           ),
           Text("Seleccione la fecha en la cual finaliza su ciclo escolar"),
           BotonCalendario(key:keyFinal,),
-          Text("Seleccione los dias de la semana que va a la escuela"),
         ],
       ),
     );
   }
+
+  @override
+  // TODO: implement wantKeepAlive
+  bool get wantKeepAlive => true;
 
 }

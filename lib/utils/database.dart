@@ -104,9 +104,9 @@ class DBProvider{
   nuevaMateria(Materia materia) async{
     final db = await database;
     var raw = await db.rawInsert(
-        "INSERT Into $materiaTable ($columnNombre,$columnMismaHora,$columnColor)"
-        " VALUES (?,?, ?)",
-        [materia.nombre,materia.mismaHora, materia.color]);
+        "INSERT Into $materiaTable ($columnNombre,$columnMismaHora, $columnMismoSalon,$columnColor)"
+        " VALUES (?,?, ?, ?)",
+        [materia.nombre,materia.mismaHora, materia.mismoSalon ,materia.color]);
     return raw;
   }
 
@@ -122,8 +122,7 @@ class DBProvider{
       return 1;
     }
     else{
-      print(table[table.length - 1]["id"].toString() + "aaaaaaa");
-      return table[0]["id"];
+      return table[table.length-1]["id"] + 1;
     }
   }
 

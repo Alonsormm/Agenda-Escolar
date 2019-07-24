@@ -24,6 +24,8 @@ class BotonCalendarioState extends State<BotonCalendario> {
   @override
   Widget build(BuildContext context) {
     return FlatButton(
+      color: Colors.amberAccent,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
       child: Text(dateFormat.format(controlador)),
       onPressed: () async {
         DateTime picker = await showDatePicker(
