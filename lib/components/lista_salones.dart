@@ -1,6 +1,6 @@
 import 'package:agenda_escolar/models/localizacion.dart';
 import 'package:agenda_escolar/utils/blocs/localizacion_bloc.dart';
-import 'package:agenda_escolar/utils/database_helper.dart';
+import 'package:agenda_escolar/utils/database.dart';
 import 'package:flutter/material.dart';
 
 class ListaSalones extends StatefulWidget {

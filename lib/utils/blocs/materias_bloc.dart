@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:agenda_escolar/models/materia.dart';
-import 'package:agenda_escolar/utils/database_helper.dart';
+import 'package:agenda_escolar/utils/database.dart';
 
 class MateriasBloc{
   final _materiasController = StreamController<List<Materia>>.broadcast();

@@ -1,8 +1,8 @@
 import 'package:agenda_escolar/models/materia.dart';
 import 'package:agenda_escolar/models/modulo.dart';
-import 'package:agenda_escolar/screens/nuevos_elementos/agregar_materia.dart';
+import 'package:agenda_escolar/screens/agregar_materia/agregar_materia_controller.dart';
 import 'package:agenda_escolar/utils/blocs/materias_bloc.dart';
-import 'package:agenda_escolar/utils/database_helper.dart';
+import 'package:agenda_escolar/utils/database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_material_color_picker/flutter_material_color_picker.dart';
 
@@ -38,16 +38,18 @@ class _ConfiguracionMateriasState extends State<ConfiguracionMaterias> {
       ),
       onTap: () async {
         Materia temp = await Navigator.push(
-            context, MaterialPageRoute(builder: (context) => AgregarMateria()));
-        bloc.add(temp);
+            context,
+            MaterialPageRoute(
+                builder: (context) => AgregarMateriaController()));
         if (temp == null) {
           return;
         }
+        bloc.add(temp);
       },
     );
   }
 
-  void _eleminarMateria(Materia materia) {
+  void _modificarMateria(Materia materia) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -63,15 +65,13 @@ class _ConfiguracionMateriasState extends State<ConfiguracionMaterias> {
             FlatButton(
               child: new Text("Modificar"),
               onPressed: () async {
-                List<Modulo> listModulos = await DBProvider.db.obtenerTodosLosModulosPorMateria(materia.id);
+                List<Modulo> listModulos = await DBProvider.db
+                    .obtenerTodosLosModulosPorMateria(materia.id);
                 Navigator.of(context).pop();
                 Materia temp = await Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => AgregarMateria(
-                              materia: materia,
-                              modulos: listModulos,
-                            )));
+                        builder: (context) => AgregarMateriaController()));
                 if (temp == null) {
                   return;
                 }
@@ -91,11 +91,25 @@ class _ConfiguracionMateriasState extends State<ConfiguracionMaterias> {
       },
     );
   }
+
   Widget modulosTexto(List<Modulo> listModulo) {
-    List<String>semana = ["Lunes", "Martes","Miercoles", "Jueves","Viernes", "Sabado", "Domingo"];
+    List<String> semana = [
+      "Lunes",
+      "Martes",
+      "Miercoles",
+      "Jueves",
+      "Viernes",
+      "Sabado",
+      "Domingo"
+    ];
     String cadena = "";
     for (int i = 0; i < listModulo.length; i++) {
-      cadena += semana[listModulo[i].idDia-1] + ": " +  listModulo[i].horaDeInicio + "-" + listModulo[i].horaDeFinal + " ";
+      cadena += semana[listModulo[i].idDia - 1] +
+          ": " +
+          listModulo[i].horaDeInicio +
+          "-" +
+          listModulo[i].horaDeFinal +
+          " ";
     }
     return Text(cadena);
   }
@@ -159,7 +173,7 @@ class _ConfiguracionMateriasState extends State<ConfiguracionMaterias> {
                             circleSize: 30,
                           ),
                           onLongPress: () {
-                            _eleminarMateria(item);
+                            _modificarMateria(item);
                           },
                         ),
                       );

@@ -2,14 +2,16 @@ import 'package:agenda_escolar/components/lista_salones.dart';
 import 'package:agenda_escolar/utils/blocs/localizacion_bloc.dart';
 import 'package:flutter/material.dart';
 
-class AgregarLocalizacion extends StatefulWidget {
-  AgregarLocalizacion({Key key}) : super(key: key);
+class LocalizacionPart extends StatefulWidget {
+
+  final Map<String,bool> dias;
+  LocalizacionPart({Key key,this.dias}) : super(key: key);
 
   @override
-  AgregarLocalizacionState createState() => AgregarLocalizacionState();
+  LocalizacionPartState createState() => LocalizacionPartState();
 }
 
-class AgregarLocalizacionState extends State<AgregarLocalizacion> {
+class LocalizacionPartState extends State<LocalizacionPart> {
   final bloc = LocalizacionesBloc();
 
   @override
@@ -72,6 +74,9 @@ class AgregarLocalizacionState extends State<AgregarLocalizacion> {
       keyListaSalonesSabado,
       keyListaSalonesDomingo
     ];
+    if(widget.dias != null){
+      dias = widget.dias;
+    }
   }
 
   Widget _mismoSalonTile() {
@@ -106,7 +111,7 @@ class AgregarLocalizacionState extends State<AgregarLocalizacion> {
     for (int i = 0; i < values.length; i++) {
       if (values[i]) {
         Column temporal = Column(children: <Widget>[
-          Text(keys[i] + " "),
+          Text(keys[i], style: (TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),),
           ListaSalones(
             key: keysListaSalonesDias[i],
             multiple: true,

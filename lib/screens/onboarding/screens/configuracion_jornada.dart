@@ -1,6 +1,6 @@
 import 'package:agenda_escolar/components/boton_calendario.dart';
 import 'package:agenda_escolar/models/jornada.dart';
-import 'package:agenda_escolar/utils/database_helper.dart';
+import 'package:agenda_escolar/utils/database.dart';
 import 'package:flutter/material.dart';
 
 

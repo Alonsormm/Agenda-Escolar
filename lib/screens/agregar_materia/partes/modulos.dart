@@ -1,21 +1,19 @@
 import 'package:agenda_escolar/components/boton_hora.dart';
-import 'package:agenda_escolar/screens/nuevos_elementos/agregar_localizacion.dart';
-import 'package:agenda_escolar/utils/database_helper.dart';
+import 'package:agenda_escolar/models/keys_dias_boton_hora.dart';
 import 'package:flutter/material.dart';
 import 'package:agenda_escolar/models/modulo.dart';
 
 final keyDialog = GlobalKey<_DialogDiasState>(debugLabel: 'dialogDias');
 
-class AgregarModulosMateria extends StatefulWidget {
+class ModulosPart extends StatefulWidget {
   final List<Modulo> modulos;
   final bool mismaHora;
-
-  AgregarModulosMateria({Key key, this.modulos, this.mismaHora}) : super(key: key);
+  ModulosPart({Key key, this.modulos, this.mismaHora}) : super(key: key);
   @override
-  AgregarModulosMateriaState createState() => AgregarModulosMateriaState();
+  ModulosPartState createState() => ModulosPartState();
 }
 
-class AgregarModulosMateriaState extends State<AgregarModulosMateria> {
+class ModulosPartState extends State<ModulosPart> {
   String _diasSelecciondos = "Seleccionar Dias";
   Map<String, bool> dias = {
     "Lunes": false,
@@ -26,115 +24,28 @@ class AgregarModulosMateriaState extends State<AgregarModulosMateria> {
     "Sabado": false,
     "Domingo": false
   };
-  final keyInicioGeneral = GlobalKey<BotonHoraState>(debugLabel: 'botonHora1');
-  final keyFinalGeneral = GlobalKey<BotonHoraState>(debugLabel: 'botonHora2');
-  final keyInicioLunes = GlobalKey<BotonHoraState>(debugLabel: 'botonHora3');
-  final keyFinalLunes = GlobalKey<BotonHoraState>(debugLabel: 'botonHora4');
-  final keyInicioMartes = GlobalKey<BotonHoraState>(debugLabel: 'botonHora5');
-  final keyFinalMartes = GlobalKey<BotonHoraState>(debugLabel: 'botonHora6');
-  final keyInicioMiercoles =
-      GlobalKey<BotonHoraState>(debugLabel: 'botonHora7');
-  final keyFinalMiercoles = GlobalKey<BotonHoraState>(debugLabel: 'botonHora8');
-  final keyInicioJueves = GlobalKey<BotonHoraState>(debugLabel: 'botonHora9');
-  final keyFinalJueves = GlobalKey<BotonHoraState>(debugLabel: 'botonHora10');
-  final keyInicioViernes = GlobalKey<BotonHoraState>(debugLabel: 'botonHora11');
-  final keyFinalViernes = GlobalKey<BotonHoraState>(debugLabel: 'botonHora12');
-  final keyInicioSabado = GlobalKey<BotonHoraState>(debugLabel: 'botonHora13');
-  final keyFinalSabado = GlobalKey<BotonHoraState>(debugLabel: 'botonHora14');
-  final keyInicioDomingo = GlobalKey<BotonHoraState>(debugLabel: 'botonHora15');
-  final keyFinalDomingo = GlobalKey<BotonHoraState>(debugLabel: 'botonHora16');
 
-  List<List<GlobalKey<BotonHoraState>>> keys;
 
   List<List<BotonHora>> listBotonHora = List<List<BotonHora>>();
-
-  final keyLocalizacion =
-      GlobalKey<AgregarLocalizacionState>(debugLabel: " hola");
+  bool mismaHora = true;
+  KeysPorDiaDeBotones keysPorDiaDeBotones = KeysPorDiaDeBotones();
 
   initState() {
     super.initState();
-    keys = [
-      [keyInicioLunes, keyFinalLunes],
-      [keyInicioMartes, keyFinalMartes],
-      [keyInicioMiercoles, keyFinalMiercoles],
-      [keyInicioJueves, keyFinalJueves],
-      [keyInicioViernes, keyFinalViernes],
-      [keyInicioSabado, keyFinalSabado],
-      [keyInicioDomingo, keyFinalDomingo]
-    ];
     if (widget.modulos != null) {
       List<Modulo> modulos = widget.modulos;
       mismaHora = widget.mismaHora;
-      completarDias(modulos);
-      modificarCadena();
+      completarDiasDeModulos(modulos);
+      modificarCadenaDeBoton();
       crearBotonesHora(modulos);
     } else {
-      listBotonHora = [
-        [
-          BotonHora(
-            key: keys[0][0],
-          ),
-          BotonHora(
-            key: keys[0][1],
-          )
-        ],
-        [
-          BotonHora(
-            key: keys[1][0],
-          ),
-          BotonHora(
-            key: keys[1][1],
-          )
-        ],
-        [
-          BotonHora(
-            key: keys[2][0],
-          ),
-          BotonHora(
-            key: keys[2][1],
-          )
-        ],
-        [
-          BotonHora(
-            key: keys[3][0],
-          ),
-          BotonHora(
-            key: keys[3][1],
-          )
-        ],
-        [
-          BotonHora(
-            key: keys[4][0],
-          ),
-          BotonHora(
-            key: keys[4][1],
-          )
-        ],
-        [
-          BotonHora(
-            key: keys[5][0],
-          ),
-          BotonHora(
-            key: keys[5][1],
-          )
-        ],
-        [
-          BotonHora(
-            key: keys[6][0],
-          ),
-          BotonHora(
-            key: keys[6][1],
-          )
-        ],
-      ];
+      for(int i = 0;  i < 7; i++){
+        listBotonHora.add([BotonHora(key: keysPorDiaDeBotones.keysTodosLosDias()[i][0]),BotonHora(key: keysPorDiaDeBotones.keysTodosLosDias()[i][1])]);
+      }
     }
   }
 
-  obtenerValue() {
-    return keyLocalizacion.currentState.obtenerValues();
-  }
-
-  void completarDias(List<Modulo> modulos) {
+  void completarDiasDeModulos(List<Modulo> modulos) {
     List<String> keysDias = dias.keys.toList();
     for (int i = 0; i < modulos.length; i++) {
       int id = modulos[i].idDia;
@@ -144,7 +55,7 @@ class AgregarModulosMateriaState extends State<AgregarModulosMateria> {
     }
   }
 
-  guardarModulo(List<int> idLocalizaciones, int idMateria) async {
+  /*guardarModulo(List<int> idLocalizaciones, int idMateria) async {
     List<bool> valuesActivos = dias.values.toList();
     List<int> idDiasActivos = List<int>();
     for (int i = 0; i < valuesActivos.length; i++) {
@@ -198,7 +109,7 @@ class AgregarModulosMateriaState extends State<AgregarModulosMateria> {
         }
       }
     }
-  }
+  }*/
 
   void crearBotonesHora(List<Modulo> modulos) {
     List<int> ids = List<int>();
@@ -208,11 +119,11 @@ class AgregarModulosMateriaState extends State<AgregarModulosMateria> {
     for (int i = 0; i < 7; i++) {
       if (ids.indexOf(i + 1) == -1) {
         listBotonHora
-            .add([BotonHora(key: keys[i][0]), BotonHora(key: keys[i][1])]);
+            .add([BotonHora(key: keysPorDiaDeBotones.keysTodosLosDias()[i][0]), BotonHora(key: keysPorDiaDeBotones.keysTodosLosDias()[i][1])]);
       } else {
         listBotonHora.add([
-          BotonHora(key: keys[i][0], hora: modulos[i].horaDeInicio),
-          BotonHora(key: keys[i][1], hora: modulos[i].horaDeFinal)
+          BotonHora(key: keysPorDiaDeBotones.keysTodosLosDias()[i][0], hora: modulos[i].horaDeInicio),
+          BotonHora(key: keysPorDiaDeBotones.keysTodosLosDias()[i][1], hora: modulos[i].horaDeFinal)
         ]);
       }
     }
@@ -232,8 +143,6 @@ class AgregarModulosMateriaState extends State<AgregarModulosMateria> {
     return diasActivos;
   }
 
-  bool mismaHora = true;
-
   void obtenerDias() {
     dias = keyDialog.currentState.obtenerDias();
   }
@@ -244,7 +153,7 @@ class AgregarModulosMateriaState extends State<AgregarModulosMateria> {
     return false;
   }
 
-  modificarCadena() {
+  modificarCadenaDeBoton() {
     if (todasFalsas()) {
       setState(() {
         _diasSelecciondos = "Seleccionar Dias";
@@ -283,23 +192,23 @@ class AgregarModulosMateriaState extends State<AgregarModulosMateria> {
             Padding(padding: EdgeInsets.only(left: 15)),
             Text("Hora"),
             BotonHora(
-              key: keyInicioGeneral,
+              key: keysPorDiaDeBotones.keysGenerales()[0],
             ),
             Text("Hora"),
             BotonHora(
-              key: keyFinalGeneral,
+              key: keysPorDiaDeBotones.keysGenerales()[1],
             ),
           ],
         ),
       );
     } else {
       return Wrap(
-        children: listaDias(),
+        children: listaConfiguracionDias(),
       );
     }
   }
 
-  List<Card> listaDias() {
+  List<Card> listaConfiguracionDias() {
     List<Card> diasRow = List<Card>();
     List<String> diasActivos = obtenerdiasActivos();
     for (int i = 0; i < diasActivos.length; i++) {
@@ -343,7 +252,7 @@ class AgregarModulosMateriaState extends State<AgregarModulosMateria> {
     );
   }
 
-  Widget botonSeleccionarDias() {
+  Widget botonSeleccionarDias(){
     return FlatButton(
       color: Colors.amberAccent,
       child: Text(
@@ -354,8 +263,7 @@ class AgregarModulosMateriaState extends State<AgregarModulosMateria> {
       onPressed: () async {
         await _elegirDiaDialog(dias);
         obtenerDias();
-        modificarCadena();
-        keyLocalizacion.currentState.dias = dias;
+        modificarCadenaDeBoton();
       },
     );
   }
@@ -373,6 +281,26 @@ class AgregarModulosMateriaState extends State<AgregarModulosMateria> {
     );
   }
 
+  bool comprobarDatos(){
+    bool valor = false;
+    List<bool> values = dias.values.toList();
+    for(int i = 0 ; i < values.length; i++){
+      if(values[i])
+        valor = true;
+    }
+
+    if(mismaHora){
+      TimeOfDay inicio = keysPorDiaDeBotones.keysGenerales()[0].currentState.controlador;
+      TimeOfDay fin = keysPorDiaDeBotones.keysGenerales()[1].currentState.controlador;
+      double inicioDouble = inicio.hour + inicio.minute/60;
+      double finDouble = fin.hour + inicio.minute/60;
+      if(finDouble <= inicioDouble){
+        valor = false;
+      }
+    }
+
+    return valor;
+  }
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -385,9 +313,6 @@ class AgregarModulosMateriaState extends State<AgregarModulosMateria> {
               _listaHoras(),
             ],
           ),
-        ),
-        AgregarLocalizacion(
-          key: keyLocalizacion,
         ),
       ],
     );

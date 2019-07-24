@@ -1,7 +1,7 @@
 import 'dart:async';
 
 
-import 'package:agenda_escolar/utils/database_helper.dart';
+import 'package:agenda_escolar/utils/database.dart';
 import 'package:agenda_escolar/models/localizacion.dart';
 
 class LocalizacionesBloc{

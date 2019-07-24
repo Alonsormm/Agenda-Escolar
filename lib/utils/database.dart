@@ -81,8 +81,8 @@ class DBProvider{
 
   initDB() async{
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
-    String path = join(documentsDirectory.path, "AgendaEscola.db");
-    return await openDatabase(path, version: 2, onOpen: (db) {
+    String path = join(documentsDirectory.path, "AgendaEscol.db");
+    return await openDatabase(path, version: 3, onOpen: (db) {
     }, onCreate: (Database db, int version) async {
       await db.execute("CREATE TABLE $tareaTable ($columnId INTEGER PRIMARY KEY, $columnIdMateria INTEGER,$columnNombre TEXT,$columnDescripcion TEXT,$columnFechaDeEntrega TEXT,$columnAcabado INTEGER, FOREIGN KEY ($columnIdMateria) REFERENCES $materiaTable($columnId))");
       await db.execute("CREATE TABLE $proyectoTable ($columnId INTEGER PRIMARY KEY, $columnIdMateria INTEGER,$columnNombre TEXT,$columnDescripcion TEXT,$columnFechaDeEntrega TEXT,$columnAcabado INTEGER, FOREIGN KEY ($columnIdMateria) REFERENCES $materiaTable($columnId))");
@@ -122,6 +122,7 @@ class DBProvider{
       return 1;
     }
     else{
+      print(table[table.length - 1]["id"].toString() + "aaaaaaa");
       return table[0]["id"];
     }
   }
