@@ -69,6 +69,9 @@ class ListaSalonesState extends State<ListaSalones> {
           await DBProvider.db.obtenerTodasLasLocalizaciones();
       if (listTemp.isEmpty) {
         ultimo = -1;
+        radioValue = -1;
+      }else{
+        radioValue = radioValue-1;
       }
     }
   }

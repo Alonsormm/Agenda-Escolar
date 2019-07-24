@@ -21,8 +21,8 @@ class _AgregarMateriaControllerState extends State<AgregarMateriaController> {
 
   GlobalKey<MateriaPageState> materiaPageKey =
       GlobalKey<MateriaPageState>(debugLabel: "materiaPageKey");
-  GlobalKey<MateriaPageState> localizacionPageKey =
-      GlobalKey<MateriaPageState>(debugLabel: "localizacionPageKey");
+  GlobalKey<LocalizacionPageState> localizacionPageKey =
+      GlobalKey<LocalizacionPageState>(debugLabel: "localizacionPageKey");
 
   List<Widget> pages;
 
@@ -34,14 +34,23 @@ class _AgregarMateriaControllerState extends State<AgregarMateriaController> {
       ),
     ];
     super.initState();
-    pageController = PageController(initialPage: _currentPage, keepPage: false);
+    pageController = PageController(initialPage: _currentPage, keepPage: true);
   }
 
-  //Botones de navegacion
+  Future<void> guardarDatos()async{
+    localizacionPageKey.currentState.listIdLocalizaciones();
+  }
 
-  void _siguiente() {
+  //Boton de navegacion
+  void _siguiente()async{
+    if(_currentPage == 1){
+      if(await localizacionPageKey.currentState.comprobar()){
+        await guardarDatos();
+      }
+    }
+    else{
     if (materiaPageKey.currentState.comprobar()) {
-      print("hola");
+      materiaPageKey.currentState.conseguirDias();
       pages.add(LocalizacionPage(
         key: localizacionPageKey,
         dias: materiaPageKey.currentState.dias,
@@ -49,8 +58,8 @@ class _AgregarMateriaControllerState extends State<AgregarMateriaController> {
       setState(() {
         _currentPage++;
       });
-      pageController.animateToPage(_currentPage, curve: Curves.bounceIn, duration: Duration(seconds: 1));
-    }
+      await pageController.animateToPage(_currentPage, curve: Curves.easeInOutQuart, duration: Duration(milliseconds: 400));
+    }}
   }
 
   @override
@@ -63,7 +72,8 @@ class _AgregarMateriaControllerState extends State<AgregarMateriaController> {
           setState(() {
             _currentPage--;
           });
-          pageController.jumpToPage(_currentPage);          
+          await pageController.animateToPage(_currentPage, curve: Curves.easeInOutQuart, duration: Duration(milliseconds: 400));
+          pages.removeLast();              
           return false;
         }
       },

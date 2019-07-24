@@ -10,7 +10,7 @@ class MateriaPage extends StatefulWidget {
   MateriaPageState createState() => MateriaPageState();
 }
 
-class MateriaPageState extends State<MateriaPage> {
+class MateriaPageState extends State<MateriaPage> with AutomaticKeepAliveClientMixin {
   GlobalKey<MateriaPartState> materiaPartKey = GlobalKey<MateriaPartState>(debugLabel: "materiaPartState");
   GlobalKey <ModulosPartState> modulosPartKey = GlobalKey<ModulosPartState>(debugLabel: "materiaPartState");
 
@@ -28,8 +28,11 @@ class MateriaPageState extends State<MateriaPage> {
     dias = modulosPartKey.currentState.dias;
   }
 
+  @override bool get wantKeepAlive => true;
+
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return ListView(
       children: <Widget>[
         Padding(padding: EdgeInsets.only(top : 15),),

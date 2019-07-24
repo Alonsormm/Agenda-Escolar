@@ -47,7 +47,7 @@ class LocalizacionPartState extends State<LocalizacionPart> {
 
   obtenerValues() {
     if (mismoSalon) {
-      return [keyListaSalones.currentState.radioValue];
+      return [keyListaSalones.currentState.radioValue + 1];
     }
     List<bool> values = dias.values.toList();
     List<int> diasActivos = List<int>();

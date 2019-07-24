@@ -299,6 +299,10 @@ class ModulosPartState extends State<ModulosPart> {
       }
     }
 
+    if(!valor){
+      Scaffold.of(context).showSnackBar(SnackBar(content: Text("Asegurate de introducir bien la hora"),));
+    }
+
     return valor;
   }
   @override

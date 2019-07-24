@@ -40,10 +40,12 @@ class MateriaPartState extends State<MateriaPart> {
   }
 
   bool comprobarDatos() {
-    if (nombreMateria.text != "")
-      return true;
-    else {
+    if (nombreMateria.text != ""){
       nombreMateria.text = nombreMateria.text.trimRight();
+      return true;
+      }
+    else {
+      Scaffold.of(context).showSnackBar(SnackBar(content: Text("Agrega el nombre de la materia"),));
       return false;
     }
   }
