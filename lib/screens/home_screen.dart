@@ -1,5 +1,5 @@
-import 'package:agenda_escolar/utils/database.dart';
 import 'package:flutter/material.dart';
+import 'package:table_calendar/table_calendar.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -10,7 +10,11 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar( title: Text("Agenda escolar"),),
+      body: ListView(
+        children: <Widget>[
+          Card(color: Colors.blueGrey, child: TableCalendar(calendarStyle: CalendarStyle(selectedColor: Colors.red),),shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
+        ],
+      ),
     );
   }
 }

@@ -120,13 +120,13 @@ class _ConfiguracionMateriasState extends State<ConfiguracionMaterias> {
       builder: (context, snapshot) {
         switch (snapshot.connectionState) {
           case ConnectionState.none:
-            return CircularProgressIndicator();
+            return Container();
             break;
           case ConnectionState.waiting:
-            return CircularProgressIndicator();
+            return Container();
             break;
           case ConnectionState.active:
-            return CircularProgressIndicator();
+            return Container();
             break;
           case ConnectionState.done:
             return modulosTexto(snapshot.data);
@@ -180,8 +180,7 @@ class _ConfiguracionMateriasState extends State<ConfiguracionMaterias> {
                     },
                   );
                 } else {
-                  return Center(
-                    child: CircularProgressIndicator(),
+                  return Container(
                   );
                 }
               },

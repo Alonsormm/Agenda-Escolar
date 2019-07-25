@@ -17,7 +17,7 @@ class _OnboardingState extends State<Onboarding> with AutomaticKeepAliveClientMi
     paginas = [configuracionJornada, configuracionMaterias];
   }
 
-  PageController _controller = PageController(initialPage: 0, keepPage: true);
+  PageController _controller = PageController(initialPage: 0, keepPage: false);
 
   int currentIndex = 0;
 
@@ -60,7 +60,8 @@ class _OnboardingState extends State<Onboarding> with AutomaticKeepAliveClientMi
             child: Text("Guardar",),
             onPressed: () async {
               SharedPreferences preferences = await SharedPreferences.getInstance();
-              await preferences.setBool("onboarding", true);
+              preferences.setBool("onboard", true);
+              Navigator.of(context).pushReplacementNamed('/home');
             },
           )
         ],
