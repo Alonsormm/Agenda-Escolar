@@ -64,7 +64,6 @@ class _ConfiguracionJornadaState extends State<ConfiguracionJornada> with Automa
   }
 
   @override
-  // TODO: implement wantKeepAlive
   bool get wantKeepAlive => true;
 
 }
