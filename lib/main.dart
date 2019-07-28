@@ -1,4 +1,4 @@
-import 'package:agenda_escolar/screens/home_screen.dart';
+import 'package:agenda_escolar/screens/home_screen/home_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:agenda_escolar/screens/onboarding/onborarding.dart';
 import 'package:flutter/material.dart';

@@ -336,6 +336,18 @@ class DBProvider{
     return lista;
   }
 
+  obtenerTodosLosModulosPorDia(int idDia)async{
+    final db = await database;
+    var res = await db.rawQuery("SELECT * FROM $moduloTable where $columnIdDia = $idDia");
+    List<Modulo> lista = List<Modulo>(); 
+    for(int i = 0 ; i < res.length; i++){
+      Modulo temp = Modulo.fromJson(res[i]);
+      lista.add(temp);
+    }
+    return lista;
+  }
+
+
   actualizarModulo(Modulo modulo) async{
     final db = await database;
     await db.update(moduloTable, modulo.toJson(),where: "id = ?", whereArgs: [modulo.id]);
