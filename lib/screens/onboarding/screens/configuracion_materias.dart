@@ -22,30 +22,35 @@ class _ConfiguracionMateriasState extends State<ConfiguracionMaterias> {
   }
 
   Widget botonMas() {
-    return InkWell(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        textBaseline: TextBaseline.alphabetic,
-        children: <Widget>[
-          Text("Nueva materia"),
-          IconButton(
-            icon: Icon(
-              Icons.add_circle_outline,
+    return Card(
+      color: Color(0xFF00FFF7),
+      child: InkWell(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          textBaseline: TextBaseline.alphabetic,
+          children: <Widget>[
+            Padding(padding: EdgeInsets.only(left: 10),),
+            Text("Nueva materia", style: TextStyle(color: Colors.black),),
+            IconButton(
+              icon: Icon(
+                Icons.add,
+                color: Colors.black,
+              ),
+              onPressed: null,
             ),
-            onPressed: null,
-          ),
-        ],
+          ],
+        ),
+        onTap: () async {
+          Materia temp = await Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => AgregarMateriaController()));
+          if (temp == null) {
+            return;
+          }
+          bloc.add(temp);
+        },
       ),
-      onTap: () async {
-        Materia temp = await Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => AgregarMateriaController()));
-        if (temp == null) {
-          return;
-        }
-        bloc.add(temp);
-      },
     );
   }
 
@@ -142,6 +147,7 @@ class _ConfiguracionMateriasState extends State<ConfiguracionMaterias> {
   @override
   Widget build(BuildContext context) {
     return Container(
+      color: Color(0xFF1E2C3D),
       padding: EdgeInsets.only(top: 70),
       child: Column(
         children: <Widget>[
@@ -164,17 +170,22 @@ class _ConfiguracionMateriasState extends State<ConfiguracionMaterias> {
                     itemCount: snapshot.data.length,
                     itemBuilder: (BuildContext context, int index) {
                       Materia item = snapshot.data[index];
-                      return Card(
-                        child: ListTile(
-                          title: Text(item.nombre),
-                          subtitle: modulosSubtitle(item),
-                          leading: CircleColor(
-                            color: Color(item.color),
-                            circleSize: 30,
+                      return Padding(
+                        padding: const EdgeInsets.only(top: 2.0),
+                        child: Card(
+                          color : Color(0xFF2A3A4D),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                          child: ListTile(
+                            title: Text(item.nombre,),
+                            subtitle: modulosSubtitle(item),
+                            leading: CircleColor(
+                              color: Color(item.color),
+                              circleSize: 30,
+                            ),
+                            onLongPress: () {
+                              _modificarMateria(item);
+                            },
                           ),
-                          onLongPress: () {
-                            _modificarMateria(item);
-                          },
                         ),
                       );
                     },

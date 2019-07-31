@@ -129,6 +129,7 @@ class MateriaPartState extends State<MateriaPart> {
   @override
   Widget build(BuildContext context) {
     return Card(
+      color: Color(0xFF2A3A4D),
       child: Column(
         children: <Widget>[
           _rowNombreMateria(),

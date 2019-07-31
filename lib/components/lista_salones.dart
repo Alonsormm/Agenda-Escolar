@@ -94,6 +94,7 @@ class ListaSalonesState extends State<ListaSalones> {
                     Localizacion temp = snapshot.data[index];
                     ultimo = index;
                     return Card(
+                      color: Color(0xFF2A3A4D),
                       child: ListTile(
                         title: Text(temp.salon),
                         leading: Radio(
@@ -126,11 +127,11 @@ class ListaSalonesState extends State<ListaSalones> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               FlatButton(
-                child: Text("Agregar Salón"),
+                child: Text("Agregar Salón", style: TextStyle(color: Colors.black),),
                 onPressed: () async {
                   await _showDialogNuevaLocalizacion();
                 },
-                color: Colors.amberAccent,
+                color: Color(0xFF00FFF7),
               ),
               widget.multiple ?  IconButton(
                 icon: Icon(Icons.cached),

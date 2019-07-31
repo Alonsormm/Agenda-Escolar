@@ -52,15 +52,18 @@ class LocalizacionPageState extends State<LocalizacionPage> {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      children: <Widget>[
-        LocalizacionPart(
-          key: localizacionPartKey,
-          dias: widget.dias,
-          mismoSalon: widget.mismoSalon,
-          listIdLocalizaciones: widget.listIdLocalizaciones,
-        )
-      ],
+    return Container(
+      color: Color(0xFF1E2C3D),
+      child: ListView(
+        children: <Widget>[
+          LocalizacionPart(
+            key: localizacionPartKey,
+            dias: widget.dias,
+            mismoSalon: widget.mismoSalon,
+            listIdLocalizaciones: widget.listIdLocalizaciones,
+          )
+        ],
+      ),
     );
   }
 }

@@ -206,15 +206,15 @@ class ModulosPartState extends State<ModulosPart> {
   Widget _listaHoras() {
     if (mismaHora) {
       return Card(
-        color: Colors.lightBlueAccent,
+        color: Color(0xFF00FFF7),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Padding(padding: EdgeInsets.only(left: 15)),
-            Text("De "),
+            Text("De ", style: TextStyle(color: Colors.black)),
             botonesGenerales[0],
             //botonesGenerales[0],
-            Text("a"),
+            Text("a", style: TextStyle(color: Colors.black)),
             //botonesGenerales[1],
             botonesGenerales[1],
           ],
@@ -233,19 +233,19 @@ class ModulosPartState extends State<ModulosPart> {
     List<int> diasActivosInt = obtenerDiasActivosInt();
     for (int i = 0; i < diasActivos.length; i++) {
       Card temp = Card(
-        color: Colors.lightBlueAccent,
+        color: Color(0xFF00FFF7),
         child: Container(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Text(diasActivos[i] + " "),
+              Text(diasActivos[i],style: TextStyle(color: Colors.black)),
               Padding(padding: EdgeInsets.only(right: 15)),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  Text("Hora"),
+                  Text("De", style: TextStyle(color: Colors.black),),
                   listBotonHora[diasActivosInt[i] - 1][0],
-                  Text("Hora"),
+                  Text("a", style: TextStyle(color: Colors.black)),
                   listBotonHora[diasActivosInt[i] - 1][1],
                 ],
               )
@@ -260,6 +260,7 @@ class ModulosPartState extends State<ModulosPart> {
 
   Widget _horaListTile() {
     return CheckboxListTile(
+      activeColor: Color(0xFF1E2C3D),
       dense: true,
       controlAffinity: ListTileControlAffinity.platform,
       title: Text("¿Todas sus clases son a la misma hora?"),
@@ -274,11 +275,12 @@ class ModulosPartState extends State<ModulosPart> {
 
   Widget _botonSeleccionarDias() {
     return FlatButton(
-      color: Colors.amberAccent,
+      color: Color(0xFF00FFF7),
       child: Text(
         _diasSelecciondos,
         overflow: TextOverflow.clip,
         textAlign: TextAlign.center,
+        style: TextStyle(color: Colors.black),
       ),
       onPressed: () async {
         await _elegirDiaDialog(dias);
@@ -306,12 +308,17 @@ class ModulosPartState extends State<ModulosPart> {
     return Column(
       children: <Widget>[
         Card(
-          child: Column(
-            children: <Widget>[
-              _botonSeleccionarDias(),
-              _horaListTile(),
-              _listaHoras(),
-            ],
+          
+          color: Color(0xFF2A3A4D),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              children: <Widget>[
+                _botonSeleccionarDias(),
+                _horaListTile(),
+                _listaHoras(),
+              ],
+            ),
           ),
         ),
       ],

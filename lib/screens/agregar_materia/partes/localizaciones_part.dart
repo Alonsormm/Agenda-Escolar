@@ -133,6 +133,7 @@ class LocalizacionPartState extends State<LocalizacionPart> {
       controlAffinity: ListTileControlAffinity.platform,
       title: Text("¿Todas sus clases son en el mismo salón?"),
       value: mismoSalon,
+      activeColor: Colors.black,
       onChanged: (value) {
         setState(() {
           mismoSalon = value;
@@ -169,6 +170,7 @@ class LocalizacionPartState extends State<LocalizacionPart> {
           ),
         ]);
         resultado.add(Card(
+          color: Color(0xFF2A3A4D),
           child: temporal,
         ));
       }
@@ -201,6 +203,7 @@ class LocalizacionPartState extends State<LocalizacionPart> {
     WidgetsBinding.instance
         .addPostFrameCallback((_) => _modificarSalones(context));
     return Card(
+      color: Color(0xFF2A3A4D),
       child: Column(
         children: <Widget>[
           Text("Elegir salón"),

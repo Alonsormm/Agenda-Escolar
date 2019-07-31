@@ -9,7 +9,8 @@ class Onboarding extends StatefulWidget {
   _OnboardingState createState() => _OnboardingState();
 }
 
-class _OnboardingState extends State<Onboarding> with AutomaticKeepAliveClientMixin{
+class _OnboardingState extends State<Onboarding>
+    with AutomaticKeepAliveClientMixin {
   List<Widget> paginas = List<Widget>();
   @override
   initState() {
@@ -25,13 +26,18 @@ class _OnboardingState extends State<Onboarding> with AutomaticKeepAliveClientMi
 
   ConfiguracionMaterias configuracionMaterias = ConfiguracionMaterias();
 
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
+
   Widget _botonSiguiente() {
     if (currentIndex < paginas.length - 1) {
       return Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: <Widget>[
           FlatButton(
-            child: Text("Siguiente"),
+            child: Text(
+              "Siguiente",
+              style: TextStyle(color: Colors.white),
+            ),
             onPressed: () async {
               if (_controller.page == 0) {
                 await DBProvider.db.eliminarJornada(0);
@@ -43,8 +49,10 @@ class _OnboardingState extends State<Onboarding> with AutomaticKeepAliveClientMi
                     currentIndex = 1;
                   });
                 } else {
-                  Scaffold.of(context).showSnackBar(SnackBar(
-                    content: Text("Asegurate de que las fechas sean correctas"),
+                  _scaffoldKey.currentState.showSnackBar(SnackBar(
+                    content: Text("Asegurate de que las fechas sean correctas")
+                  //Scaffold.of(context).showSnackBar(SnackBar(
+                  //  content: Text("Asegurate de que las fechas sean correctas"),
                   ));
                 }
               }
@@ -57,9 +65,13 @@ class _OnboardingState extends State<Onboarding> with AutomaticKeepAliveClientMi
         mainAxisAlignment: MainAxisAlignment.end,
         children: <Widget>[
           FlatButton(
-            child: Text("Guardar",),
+            child: Text(
+              "Guardar",
+              style: TextStyle(color: Colors.white),
+            ),
             onPressed: () async {
-              SharedPreferences preferences = await SharedPreferences.getInstance();
+              SharedPreferences preferences =
+                  await SharedPreferences.getInstance();
               preferences.setBool("onboard", true);
               Navigator.of(context).pushReplacementNamed('/home');
             },
@@ -77,7 +89,10 @@ class _OnboardingState extends State<Onboarding> with AutomaticKeepAliveClientMi
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           FlatButton(
-            child: Text("Atras"),
+            child: Text(
+              "Atras",
+              style: TextStyle(color: Colors.white),
+            ),
             onPressed: () async {
               if (_controller.page == 1) {
                 await configuracionJornada.eliminarDatos();
@@ -97,13 +112,15 @@ class _OnboardingState extends State<Onboarding> with AutomaticKeepAliveClientMi
     }
   }
 
-  @override bool get wantKeepAlive => true;
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
     return Scaffold(
-      body: Stack(
+      key: _scaffoldKey,
+      body: Builder(builder:(context) => Stack(
         children: <Widget>[
           PageView.builder(
             itemCount: paginas.length,
@@ -125,7 +142,10 @@ class _OnboardingState extends State<Onboarding> with AutomaticKeepAliveClientMi
                 children: <Widget>[
                   Padding(
                     padding: const EdgeInsets.only(left: 32.0),
-                    child: Text("Agenda Escolar"),
+                    child: Text(
+                      "Agenda Escolar",
+                      style: TextStyle(color: Colors.white, fontSize: 20),
+                    ),
                   )
                 ],
               ),
@@ -146,6 +166,6 @@ class _OnboardingState extends State<Onboarding> with AutomaticKeepAliveClientMi
           ),
         ],
       ),
-    );
+    ),);
   }
 }

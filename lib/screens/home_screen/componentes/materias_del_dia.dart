@@ -6,6 +6,11 @@ import 'package:agenda_escolar/utils/database.dart';
 import 'package:flutter/material.dart';
 
 class MateriasDelDia extends StatefulWidget {
+
+  final int dia;
+
+  MateriasDelDia({@required this.dia});
+
   @override
   MateriasDelDiaState createState() => MateriasDelDiaState();
 }
@@ -30,7 +35,7 @@ class MateriasDelDiaState extends State<MateriasDelDia> {
 
   Future<List<Modulo>> _obtenerModulosDeHoy() async {
     //int idDia = DateTime.now().weekday;
-    int idDia = 2;
+    int idDia = widget.dia;
     List<Modulo> modulos =
         await DBProvider.db.obtenerTodosLosModulosPorDia(idDia);
     return modulos;
@@ -99,56 +104,6 @@ class MateriasDelDiaState extends State<MateriasDelDia> {
     return 0;
   }
 
-  /*Widget _cardMateriasDeHoy(BuildContext buildContext) {
-    return ListView.builder(
-      itemCount: materias.length,
-      scrollDirection: Axis.horizontal,
-      shrinkWrap: true,
-      itemBuilder: (BuildContext context, int index) {
-        return Padding(
-          padding: const EdgeInsets.only(top: 8.0, left: 8.0, right: 8.0),
-          child: Container(
-            child: Card(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15)),
-              color: Color(0xFF2A3A4D),
-              child: Padding(
-                padding: const EdgeInsets.all(15.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    Text(
-                      materias[index].nombre,
-                      style: TextStyle(color: Colors.white, fontSize: 18),
-
-                    ),
-                    Padding(
-                      padding: EdgeInsets.all(5),
-                    ),
-                    Row(
-                      children: <Widget>[
-                        Text(
-                          modulos[index].horaDeInicio +
-                              "-" +
-                              modulos[index].horaDeFinal,
-                          style: TextStyle(color: Colors.white60),
-                        ),
-                      ],
-                    ),
-                    Padding(
-                      padding: EdgeInsets.all(5),
-                    ),
-                    Card(color: Color(materias[index].color),child: SizedBox(height: 10,width: 200,),),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }*/
 
   Widget _cardMateriasDeHoy() {
     return ListView.builder(
@@ -160,7 +115,7 @@ class MateriasDelDiaState extends State<MateriasDelDia> {
           onTap: () {
             Navigator.of(context).push(MaterialPageRoute(builder: (context) {
               return InformacionMateria(
-                tagColor: "color" + index.toString(),
+                tagColor: "color" + index.toString() + "dia" + widget.dia.toString(),
                 color: Color(materias[index].color),
                 tagNombre: "nombre" + index.toString(),
                 nombre: materias[index].nombre,
@@ -177,16 +132,13 @@ class MateriasDelDiaState extends State<MateriasDelDia> {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
-                    Hero(
-                      tag: 'color' + index.toString(),
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(8.0, 8.0, 0, 8.0),
-                        child: Card(
-                          color: Color(materias[index].color),
-                          child: SizedBox(
-                            width: 10,
-                            height: double.infinity,
-                          ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(8.0, 8.0, 0, 8.0),
+                      child: Card(
+                        color: Color(materias[index].color),
+                        child: SizedBox(
+                          width: 10,
+                          height: double.infinity,
                         ),
                       ),
                     ),
@@ -197,14 +149,11 @@ class MateriasDelDiaState extends State<MateriasDelDia> {
                         Flexible(
                           child: Container(
                             width: 220,
-                            child: Hero(
-                              tag: "nombre" + index.toString(),
-                              child: Text(
-                                materias[index].nombre,
-                                style:
-                                    TextStyle(color: Colors.white, fontSize: 18),
-                                textAlign: TextAlign.center,
-                              ),
+                            child: Text(
+                              materias[index].nombre,
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 18),
+                              textAlign: TextAlign.center,
                             ),
                           ),
                         ),

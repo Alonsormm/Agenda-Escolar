@@ -13,6 +13,7 @@ main() async {
   runApp(MaterialApp(
     title: "Agenda Escolar",
     home: _defaultHome,
+    theme: ThemeData.dark(),
     routes: <String, WidgetBuilder>{
         '/onboarding': (_) => new Onboarding(), // Login Page
         '/home': (_) => new HomePage(), // Home Page

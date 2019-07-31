@@ -37,7 +37,7 @@ class BotonHoraState extends State<BotonHora> {
   @override
   Widget build(BuildContext context) {
     return FlatButton(
-      child: Text(controlador.format(context)),
+      child: Text(controlador.format(context), style: TextStyle(color: Colors.black)),
       onPressed: () async {
         var picker = await showTimePicker(
           context: context,
