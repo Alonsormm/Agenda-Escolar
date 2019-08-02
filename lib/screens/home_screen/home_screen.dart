@@ -2,6 +2,7 @@ import 'package:agenda_escolar/models/materia.dart';
 import 'package:agenda_escolar/models/modulo.dart';
 import 'package:agenda_escolar/screens/home_screen/pages/home_page_one.dart';
 import 'package:agenda_escolar/screens/home_screen/pages/home_page_two.dart';
+import 'package:agenda_escolar/screens/agregar_tarea/agregar_tarea.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
@@ -73,6 +74,7 @@ class _HomePageState extends State<HomePage>
       ),
       body: Container(
         child: PageView.builder(
+          physics: AlwaysScrollableScrollPhysics(),
           scrollDirection: Axis.horizontal,
           itemCount: pages.length,
           itemBuilder: (BuildContext context, int index) {
@@ -92,7 +94,11 @@ class _HomePageState extends State<HomePage>
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
+            return AgregarTarea();
+          }));
+        },
         child: Icon(
           Icons.add,
           color: Colors.black,

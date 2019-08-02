@@ -7,7 +7,7 @@ main() async {
   SharedPreferences preferences = await SharedPreferences.getInstance();
   bool respuesta = preferences.getBool("onboard");
   Widget _defaultHome = Onboarding();
-  if(respuesta != null){
+  if (respuesta != null) {
     _defaultHome = HomePage();
   }
   runApp(MaterialApp(
@@ -15,8 +15,8 @@ main() async {
     home: _defaultHome,
     theme: ThemeData.dark(),
     routes: <String, WidgetBuilder>{
-        '/onboarding': (_) => new Onboarding(), // Login Page
-        '/home': (_) => new HomePage(), // Home Page
-      },
+      '/onboarding': (_) => new Onboarding(), // Login Page
+      '/home': (_) => new HomePage(), // Home Page
+    },
   ));
 }
