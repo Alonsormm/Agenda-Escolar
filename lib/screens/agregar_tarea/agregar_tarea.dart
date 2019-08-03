@@ -1,5 +1,8 @@
+import 'package:agenda_escolar/models/materia.dart';
+import 'package:agenda_escolar/utils/database.dart';
 import 'package:flutter/material.dart';
 import 'package:agenda_escolar/components/boton_calendario.dart';
+import 'package:flutter_material_color_picker/flutter_material_color_picker.dart';
 
 class AgregarTarea extends StatefulWidget {
   @override
@@ -135,6 +138,67 @@ class _InformacionEntrega extends StatefulWidget {
 }
 
 class __InformacionEntregaState extends State<_InformacionEntrega> {
+  MateriaPopUp materia;
+
+  Widget botonMateria() {
+    return FutureBuilder(
+      future: DBProvider.db.obtenerTodasLasMaterias(),
+      builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+        switch (snapshot.connectionState) {
+          case ConnectionState.none:
+            return CircularProgressIndicator();
+            break;
+          case ConnectionState.waiting:
+            return CircularProgressIndicator();
+            break;
+          case ConnectionState.active:
+            return CircularProgressIndicator();
+            break;
+          case ConnectionState.done:
+            List<PopupMenuItem<MateriaPopUp>> listPopup = List<PopupMenuItem<MateriaPopUp>>();
+            List<Materia> listMateria = snapshot.data;
+
+
+            for (int i = 0; i < listMateria.length; i++) {
+              MateriaPopUp materiaPopUp = MateriaPopUp(materia: listMateria[i],);
+
+              if(i == 0){
+                materia = materiaPopUp;
+              }
+
+              listPopup.add(PopupMenuItem(
+                value: materiaPopUp,
+                child: materiaPopUp,
+              ));
+            }
+
+            return Expanded(
+              child: Card(
+                color: Color(0xFF1E2C3D),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15)),
+                child: PopupMenuButton(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: materia,
+                  ),
+                  itemBuilder: (context) {
+                    return listPopup;
+                  },
+                  onSelected: (row){
+                    setState(() {
+                     materia = row;
+                    });
+                  },
+                ),
+              ),
+            );
+            break;
+        }
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -152,24 +216,18 @@ class __InformacionEntregaState extends State<_InformacionEntrega> {
                 padding: const EdgeInsets.all(8.0),
                 child: Row(
                   children: <Widget>[
-                    Text(
-                      "Materia: ",
-                      style: TextStyle(fontSize: 16),
+                    Container(
+                      child: Text(
+                        "Materia: ",
+                        style: TextStyle(fontSize: 16),
+                      ),
                     ),
                     Padding(
-                      padding: EdgeInsets.only(right: 15),
+                      padding: EdgeInsets.only(right: 5),
                     ),
-                    OutlineButton(
-                      color: Color(0xFF1E2C3D),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15)),
-                      child: Row(
-                        children: <Widget>[
-                          Text("Tarea"),
-                          Icon(Icons.keyboard_arrow_down),
-                        ],
-                      ),
-                      onPressed: () {},
+                    botonMateria(),
+                    Padding(
+                      padding: EdgeInsets.only(right: 5),
                     ),
                   ],
                 ),
@@ -179,5 +237,33 @@ class __InformacionEntregaState extends State<_InformacionEntrega> {
         ),
       ),
     );
+  }
+}
+
+
+class MateriaPopUp extends StatelessWidget {
+
+  Materia materia;
+  MateriaPopUp({@required this.materia});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+                  children: <Widget>[
+                    CircleColor(
+                      color: Color(materia.color),
+                      circleSize: 20,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(right: 10),
+                    ),
+                    Container(
+                        width: 200,
+                        child: Text(
+                          materia.nombre,
+                          overflow: TextOverflow.clip,
+                        )),
+                  ],
+                );
   }
 }
